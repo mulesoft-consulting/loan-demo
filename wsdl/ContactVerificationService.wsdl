@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+	xmlns:cvs="http://cvs.creditcard.fnb.com/service/" 
+	xmlns:cv="urn:com:fnb:creditcard:cvs:dto"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	name="ContactVerificationService" 
+	targetNamespace="http://cvs.creditcard.fnb.com/service/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://cvs.creditcard.fnb.com/service/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:import namespace="urn:com:fnb:creditcard:cvs:dto" schemaLocation="xsd/ContactVerification.xsd"/>
+	<xsd:element name="VerifyContactInfo" type="cv:VerifyContactInfo"/>
+	<xsd:element name="VerifyContactInfoResponse" type="cv:VerifyContactInfoResponse"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="VerifyContactInfoRequest">
+    <wsdl:part element="cvs:VerifyContactInfo" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="VerifyContactInfoResponse">
+    <wsdl:part element="cvs:VerifyContactInfoResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="ContactVerificationService">
+    <wsdl:operation name="VerifyContactInfo">
+      <wsdl:input message="cvs:VerifyContactInfoRequest"/>
+      <wsdl:output message="cvs:VerifyContactInfoResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ContactVerificationServiceSOAP" type="cvs:ContactVerificationService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="VerifyContactInfo">
+      <soap:operation soapAction="http://cvs.creditcard.fnb.com/service/VerifyContactInfo"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ContactVerificationService">
+    <wsdl:port binding="cvs:ContactVerificationServiceSOAP" name="ContactVerificationServiceSOAP">
+      <soap:address location="http://localhost:8090/fnbCard/services/ContactVerificationService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:c="urn:com:fnb:creditcard:cms:dto" 
+	targetNamespace="urn:com:fnb:creditcard:cms:dto">
+
+	<xsd:complexType name="Address">
+		<xsd:sequence>
+			<xsd:element name="Street1" type="xsd:string"/>
+			<xsd:element name="Street2" type="xsd:string" nillable="true"/>
+			<xsd:element name="City" type="xsd:string"/>
+			<xsd:element name="State" type="xsd:string"/>
+			<xsd:element name="Zip" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Phone">
+		<xsd:sequence>
+			<xsd:element name="AreaCode" type="xsd:string"/>
+			<xsd:element name="LocalNumber" type="xsd:string"/>
+			<xsd:element name="type" type="xsd:string" nillable="true"/> 
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="IncomeDetails">
+		<xsd:sequence>
+			<xsd:element name="Employer">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Name" type="xsd:string"/>
+						<xsd:element name="Phone" type="c:Phone"/>
+						<xsd:element name="Address" type="c:Address"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="IncomeSource" type="xsd:string"/>
+			<xsd:element name="TotalIncome" type="xsd:integer"/>
+			<xsd:element name="FICOScore" type="xsd:int"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="BalanceInfo">
+		<xsd:sequence>
+			<xsd:element name="AvailableCredit" type="xsd:decimal"/>
+			<xsd:element name="Balance" type="xsd:decimal"/>
+			<xsd:element name="RecentActivity" type="xsd:decimal"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RateInfo">
+		<xsd:sequence>
+			<xsd:element name="APR" type="xsd:decimal"/>
+			<xsd:element name="Terms">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="TermsLevel" type="xsd:string"/>
+						<xsd:element name="Description" type="xsd:string"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CardAccountInfo">
+		<xsd:sequence>
+			<xsd:element name="CardNumber" type="xsd:string"/>
+			<xsd:element name="CVV" type="xsd:string"/>
+			<xsd:element name="ExpirationDate" type="xsd:date"/>
+			<xsd:element name="BalanceProfile" type="c:BalanceInfo" nillable="true"/>
+			<xsd:element name="RateProfile" type="c:RateInfo" nillable="true"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ContactInfo">
+		<xsd:sequence>
+			<xsd:element name="Address" type="c:Address"/>
+			<xsd:element maxOccurs="3" minOccurs="1" name="Phone" type="c:Phone"/>
+			<xsd:element name="Email" type="xsd:string" nillable="true"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="CardMember">
+		<xsd:sequence>
+			<xsd:element name="FirstName" type="xsd:string"/>
+			<xsd:element name="LastName" type="xsd:string"/>
+			<xsd:element name="SSN" type="xsd:string"/>
+			<xsd:element name="CardAccountProfile" type="c:CardAccountInfo" nillable="true"/>
+			<xsd:element name="IncomeProfile" type="c:IncomeDetails"/>
+			<xsd:element name="ContactProfile" type="c:ContactInfo"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="AddCardMemberResponseDetail">
+		<xsd:sequence>
+			<xsd:element name="CardMember" type="c:CardMember"/>
+        	<xsd:element name="msg" type="xsd:string"/>
+        </xsd:sequence>
+	  	<xsd:attribute name="result" type="xsd:boolean"/>
+	</xsd:complexType>
+
+      <xsd:complexType name="AddCardMember">
+        <xsd:sequence>
+          <xsd:element name="in" type="c:CardMember"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:complexType name="AddCardMemberResponse">
+        <xsd:sequence>
+          <xsd:element name="out" type="c:AddCardMemberResponseDetail"/>
+        </xsd:sequence>
+      </xsd:complexType>
+</xsd:schema>

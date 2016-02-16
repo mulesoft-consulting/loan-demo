@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+	xmlns:cm="urn:com:fnb:creditcard:cms:dto" 
+	xmlns:cms="http://cms.creditcard.fnb.com/service/" 
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	name="CardMemberService" 
+	targetNamespace="http://cms.creditcard.fnb.com/service/">
+  <wsdl:types>
+ 	<xsd:schema targetNamespace="http://cms.creditcard.fnb.com/service/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:import namespace="urn:com:fnb:creditcard:cms:dto" schemaLocation="xsd/CardMember.xsd"/>
+      <xsd:element name="AddCardMember" type="cm:AddCardMember"/>
+      <xsd:element name="AddCardMemberResponse" type="cm:AddCardMemberResponse"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="AddCardMemberRequest">
+    <wsdl:part element="cms:AddCardMember" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="AddCardMemberResponse">
+    <wsdl:part element="cms:AddCardMemberResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="CardMemberService">
+    <wsdl:operation name="AddCardMember">
+      <wsdl:input message="cms:AddCardMemberRequest"/>
+      <wsdl:output message="cms:AddCardMemberResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="CardMemberServiceSOAP" type="cms:CardMemberService">
+  	<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+  	<wsdl:operation name="AddCardMember">
+  		<soap:operation soapAction="http://cms.creditcard.fnb.com/service/AddCardMember"/>
+  		<wsdl:input>
+  			<soap:body use="literal"/>
+  		</wsdl:input>
+  		<wsdl:output>
+  			<soap:body use="literal"/>
+  		</wsdl:output>
+  	</wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="CardMemberService">
+    <wsdl:port binding="cms:CardMemberServiceSOAP" name="CardMemberServiceSOAP">
+      <soap:address location="http://localhost:8090/fnbCard/services/CardMemberService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+	xmlns:des="http://creditdecision.creditcard.fnb.com/service/"
+	xmlns:cd="urn:com:fnb:creditcard:creditdecision:dto" 
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	name="DecionEngineService" 
+	targetNamespace="http://creditdecision.creditcard.fnb.com/service/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://creditdecision.creditcard.fnb.com/service/" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:import namespace="urn:com:fnb:creditcard:creditdecision:dto" schemaLocation="xsd/DecisionEngine.xsd"/>
+      <xsd:element name="PerformCreditCheck" type="cd:PerformCreditCheck"/>
+      <xsd:element name="PerformCreditCheckResponse" type="cd:PerformCreditCheckResponse"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="PerformCreditCheckRequest">
+    <wsdl:part element="des:PerformCreditCheck" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="PerformCreditCheckResponse">
+    <wsdl:part element="des:PerformCreditCheckResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="DecisionEngineService">
+    <wsdl:operation name="PerformCreditCheck">
+      <wsdl:input message="des:PerformCreditCheckRequest"/>
+      <wsdl:output message="des:PerformCreditCheckResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="DecisionEngineServiceSOAP" type="des:DecisionEngineService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="PerformCreditCheck">
+      <soap:operation soapAction="http://creditdecision.creditcard.fnb.com/service/PerformCreditCheck"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="DecisionEngineService">
+    <wsdl:port binding="des:DecisionEngineServiceSOAP" name="DecisionEngineServiceSOAP">
+      <soap:address location="http://localhost:8090/fnbCard/services/DecisionEngineService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
