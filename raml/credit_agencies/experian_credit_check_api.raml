@@ -1,0 +1,41 @@
+#%RAML 0.8
+title: Experian Credit Checking Service
+version: 1.0
+/ficoScore:
+  displayName: Experian FICO Credit Check Service
+  description: returns a FICO Score based on Experian Credit history on the individual
+  post:
+    description: submit an individual's details and returns Experian FICO score
+    body:
+      application/json:
+         example: |
+             {
+              "first_name": "James",
+              "middle_initial": "",
+              "last_name": "Johnson",
+              "individual_tax_id_number": "312-22-1234",
+              "address_1": "123 Main Street",
+              "address_2": "",
+              "city": "Madison",
+              "state": "WI",
+              "zip_code": "54500",
+              "monthly_net_income": 5000
+             }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+               "first_name": "James",
+               "middle_initial": "",
+               "last_name": "Johnson",
+               "individual_tax_id_number": "312-22-1234",
+               "address_1": "123 Main Street",
+               "address_2": "",
+               "city": "Madison",
+               "state": "WI",
+               "zip_code": "54500",
+               "monthly_net_income": 5000,  
+               "fico_score" : 705
+              }
