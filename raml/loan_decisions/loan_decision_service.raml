@@ -1,0 +1,19 @@
+#%RAML 0.8
+title: Loan Decision Service
+version: 1.0.development
+#baseUri: http://localhost:8081/api
+/creditCheck:
+  displayName: Credit Check
+  description: Performs Credit Checks on a an Applicant
+  post:
+    description: Submit an Application for Loan and returns loan decision
+    body:
+      application/json:
+        schema: !include loan_decision_request_schema.json
+        example: !include loan_decision_request_example.json
+    responses:
+      200:
+        body:
+          application/json:
+            schema: !include loan_decision_response_schema.json
+            example: !include loan_decision_response_example.json
