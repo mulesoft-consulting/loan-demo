@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://jsonschema.net",
+  "type": "object",
+  "properties": {
+    "loan_apps": { "$ref": "url://loan-application-schema.json/#/definitions/loan_apps" }
+  }
+}
