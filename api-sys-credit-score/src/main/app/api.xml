@@ -23,6 +23,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
         <scatter-gather doc:name="Scatter-Gather">
             <flow-ref name="transunion_Flow" doc:name="transunion_Flow"/>
             <flow-ref name="equifax_Flow" doc:name="equifax_Flow"/>
+            <flow-ref name="experian_Flow" doc:name="experian_Flow"/>
         </scatter-gather>
         <object-to-string-transformer doc:name="Object to String"/>
         <dw:transform-message doc:name="Transform Message" metadata:id="e0c7f12d-48b4-4b76-9205-88710a2a3e62">
@@ -41,7 +42,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 	state: payload.state[0],
 	zipCode: payload.zipCode[0],
 	monthlyNetIncome: payload.monthlyNetIncome[0],
-	combinedFicoScore: (payload.ficoScore[0] + payload.ficoScore[1] + 750)/3 as :number as :string {format:"##.##"},
+	combinedFicoScore: (payload.ficoScore[0] + payload.ficoScore[1] + payload.ficoScore[2])/3 as :number as :string {format:"##.##"},
 	bureauScores: [{
 		bureau: payload.bureau[0],
 		ficoScore: payload.ficoScore[0]
@@ -51,8 +52,8 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 		ficoScore: payload.ficoScore[1]
 	},
     {
-		"bureau": "experian",
-		"ficoScore": 750
+		"bureau": payload.bureau[2],
+		"ficoScore": payload.ficoScore[2]
 	}
 	]
 }]]></dw:set-payload>
@@ -78,14 +79,57 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
         
         <wmq:message-info-mapping/>
     </flow>
-    <!-- <flow name="apiFlow">
+     <flow name="experian_Flow">
+        <dw:transform-message metadata:id="6c596be6-ab18-441f-bd5f-fc2626eac120" doc:name="Transform Message">
+            <dw:input-payload doc:sample="json.json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload]]></dw:set-payload>
+        </dw:transform-message>
         <scripting:transformer doc:name="Groovy">
-            <scripting:script engine="Groovy"><![CDATA[String s = String.format("%-12.5f%.20f", 12.23429837482,9.10212023134);
+            <scripting:script engine="Groovy"><![CDATA[def s = payload['firstName']? payload['firstName'].padRight(45):"".padRight(45)
+s+=payload['middleInitial']? payload['middleInitial'].padRight(2):"".padRight(2)
+s+=payload['lastName']? payload['lastName'].padRight(45):"".padRight(45)
+s+=payload['individualTaxIdNumber']?payload['individualTaxIdNumber'].padRight(15):"".padRight(15)
+s+=payload['address1']?payload['address1'].padRight(50):"".padRight(50)
+s+=payload['address2']?payload['address2'].padRight(50):"".padRight(50)
+s+=payload['city']?payload['city'].padRight(15):"".padRight(15)
+s+=payload['state']?payload['state'].padRight(2):"".padRight(2)
+s+=payload['zipCode']?payload['zipCode'].padRight(5):"".padRight(5)
+s+=payload['monthlyNetIncome']?String.format("%010d",payload['monthlyNetIncome']):"".padLeft(10,"0")
 ]]></scripting:script>
         </scripting:transformer>
-        <object-to-string-transformer doc:name="Object to String"/>
-    </flow> -->
-    
+        <request-reply doc:name="Request-Reply">
+            <wmq:outbound-endpoint queue="sl.experian.request" connector-ref="WMQ" doc:name="WMQ"/>
+            <wmq:inbound-endpoint queue="sl.experian.response" connector-ref="WMQ" doc:name="WMQ"/>
+        </request-reply>
+        <tracking:custom-event event-name="Experience Response" doc:name="Custom Business Event"/>
+        
+        <dw:transform-message metadata:id="119d5c17-32c5-44f5-b84e-01b610eef969" doc:name="Transform Message">
+        	<dw:input-payload doc:sample="string.json" mimeType="application/java"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	firstName: payload[0..44],
+	middleInitial: payload[45..46],
+	lastName: payload[47..91],
+	individualTaxIdNumber: payload[92..106],
+	address1: payload[107..157],
+	address2: payload[158..206],
+	city: payload[207..221],
+	state: payload[222..223],
+	zipCode: payload[224..228],
+	monthlyNetIncome: payload[229..238] as :number,
+	bureau: payload[239..253],
+	ficoScore: payload[254..257] as :number
+	
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <wmq:message-info-mapping/>
+    </flow>
+     
     <apikit:mapping-exception-strategy name="api-apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
