@@ -98,29 +98,27 @@ return sum % 1000]]></scripting:script>
     <flow name="experian_flow">
         <wmq:inbound-endpoint queue="sl.experian.request" connector-ref="WMQ" doc:name="WMQ"/>
         <set-variable variableName="originalRequest" value="#[payload]" doc:name="Save Original Requet"/>
-        <dw:transform-message doc:name="Transform Message">
+        <dw:transform-message doc:name="Transform Message" metadata:id="0ab9fc68-ba48-451f-bff1-76c42315fcea">
+            <dw:input-payload doc:sample="string.dwl"/>
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/java
 ---
-{
-	individualTaxIdNumber: payload[0..11],
-	monthlyNetIncome: payload[12..21] as :number {format: "##.#"}
-}]]></dw:set-payload>
+payload[92..107] ++ payload[229..239]
+	
+]]></dw:set-payload>
         </dw:transform-message>
         <scripting:transformer doc:name="Groovy">
-            <scripting:script engine="Groovy"><![CDATA[def str = payload.individualTaxIdNumber + payload.monthlyNetIncome
+            <scripting:script engine="Groovy"><![CDATA[def str = payload
 def sum = 0
 str.each {letter -> sum+=(int)letter}
-return sum % 1000]]></scripting:script>
+def total = sum % 1000
+
+def msg = flowVars['originalRequest']
+msg+="experian".padRight(15)
+msg+=String.format("%04d",total)
+
+return msg]]></scripting:script>
         </scripting:transformer>
-        <dw:transform-message doc:name="Transform Message">
-            <dw:set-payload><![CDATA[%dw 1.0
-%output application/java
-%function align(str,length,padding,direction){
-	
-}
----
-flowVars.originalRequest ++ align("experian",15," ",left) ++ align(payload,9,0,right)]]></dw:set-payload>
-        </dw:transform-message>
+        <object-to-string-transformer doc:name="Object to String"/>
     </flow>
 </mule>
