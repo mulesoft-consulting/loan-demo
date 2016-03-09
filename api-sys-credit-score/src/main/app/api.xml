@@ -16,9 +16,6 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
         <apikit:router config-ref="api-config" doc:name="APIkit Router" />
         <exception-strategy ref="api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy" />
     </flow>
-    <flow name="get:/score:api-config">
-        <set-payload value="{&#xA;  &quot;firstName&quot;: &quot;James&quot;,&#xA;  &quot;middleInitial&quot;: &quot;&quot;,&#xA;  &quot;lastName&quot;: &quot;Johnson&quot;,&#xA;  &quot;individualTaxIdNumber&quot;: &quot;312-22-1234&quot;,&#xA;  &quot;address1&quot;: &quot;123 Main Street&quot;,&#xA;  &quot;address2&quot;: &quot;&quot;,&#xA;  &quot;city&quot;: &quot;Madison&quot;,&#xA;  &quot;state&quot;: &quot;WI&quot;,&#xA;  &quot;zipCode&quot;: &quot;54500&quot;,&#xA;  &quot;monthlyNetIncome&quot;: 5000,&#xA;  &quot;combinedFicoScore&quot;: 750,&#xA;  &quot;bureauScores&quot;: [&#xA;    {&#xA;      &quot;bureau&quot;: &quot;transunion&quot;,&#xA;      &quot;ficoScore&quot;: 750&#xA;    },&#xA;    {&#xA;      &quot;bureau&quot;: &quot;equixfax&quot;,&#xA;      &quot;ficoScore&quot;: 750&#xA;    },&#xA;    {&#xA;      &quot;bureau&quot;: &quot;experian&quot;,&#xA;      &quot;ficoScore&quot;: 750&#xA;    }&#xA;  ]&#xA;}" doc:name="Set Payload"/>
-    </flow>
     <flow name="post:/scores:application/json:api-config">
         <scatter-gather doc:name="Scatter-Gather">
             <flow-ref name="transunion_Flow" doc:name="transunion_Flow"/>
