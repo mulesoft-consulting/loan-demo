@@ -1,0 +1,11 @@
+{
+    "inputMessageMetadata": {},
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "equifax_consumer"
+        }
+    },
+    "id": "b2bd287f-ec7a-433f-89e5-da1798ff91be",
+    "version": "5.2.0.0"
+}

@@ -1,0 +1,11 @@
+{
+    "inputMessageMetadata": {},
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "transunion_consumer"
+        }
+    },
+    "id": "0886ce19-079e-4901-befd-88abc6c875a5",
+    "version": "5.2.0.0"
+}
