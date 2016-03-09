@@ -1,8 +1,13 @@
+//host = window.location.host;
+//base = host.startsWith("localhost") || host.startsWith("127.") ? "/" : "/";
+
 angular
-		.module('myModule', [ 'schemaForm' ])
+		.module('myModule', [ 'schemaForm', 'ngSanitize' ])
 		.controller(
 				'FormController',
 				function($scope, $http) {
+					
+					$scope.response = {};
 					
 					 $http.get('form/loan-application-example-in.json')
 				       .then(function(res){
@@ -42,8 +47,17 @@ angular
 							}, "financial_information",
 
 							{
-								type : "submit",
-								title : "Save"
+								type : "button",
+								title : "Save",
+								onClick : "submit()"
 							} ];
+					
+					$scope.submit = function() {
+						
+						$http.post('/api/application', { "loan_app" : $scope.model })
+					       .then(function(res){
+					          $scope.response = res.data;             
+					        });
+					}
 
 				});

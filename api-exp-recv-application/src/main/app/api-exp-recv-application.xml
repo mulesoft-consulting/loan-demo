@@ -6,7 +6,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
     <context:property-placeholder location="api.properties" />
-    <apikit:config name="apiConfig" raml="api.raml" consoleEnabled="true" consolePath="console" doc:name="Router" />
+    <apikit:config name="apiConfig" raml="api.raml" consoleEnabled="true" consolePath="console" doc:name="Router" disableValidations="true"/>
     <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="${http.port}" doc:name="HTTP Listener Configuration" />
     <flow name="main">
         <http:listener config-ref="HTTP_Listener_Configuration" doc:name="HTTP" path="/api/*" />
@@ -14,11 +14,13 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
         <exception-strategy ref="apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy" />
     </flow>
     <flow name="post:/application:application/json:apiConfig">
+        <logger message="Received #[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger"/>
         <dw:transform-message metadata:id="95a00837-5b3e-47c1-a512-98e003295ed5" doc:name="Transform Message">
             <dw:set-payload><![CDATA[%dw 1.0
-%output application/java
+%output application/json
 ---
 {
+	message: "hola"
 }]]></dw:set-payload>
         </dw:transform-message>
     </flow>
