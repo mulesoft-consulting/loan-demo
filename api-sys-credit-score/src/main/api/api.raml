@@ -15,17 +15,4 @@ baseUri: http://www.mythicalfinance.com/api/sys/credit-score
           application/json: 
             example: !include api-sys-credit-score-example-out.json
             schema: !include api-sys-credit-score-schema-out.json
-
-/score:
-  get: 
-    queryParameters: 
-      bureau:
-        type: string
-        required: true
-    responses: 
-      200: 
-        body:   
-          application/json: 
-            example: !include api-sys-credit-score-example-out.json
-            schema: !include api-sys-credit-score-schema-out.json
-        
+            
