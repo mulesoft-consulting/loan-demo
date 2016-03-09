@@ -1,23 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:wmq="http://www.mulesoft.org/schema/mule/ee/wmq" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/ee/wmq http://www.mulesoft.org/schema/mule/ee/wmq/current/mule-wmq-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+	<wmq:connector name="WMQ" hostName="${mq.hostname}" port="${mq.port}" queueManager="${mq.queueManager}" channel="${mq.channel}" username="${mq.username}" transportType="CLIENT_MQ_TCPIP" specification="1.1" validateConnections="true" doc:name="WMQ"/>
     <apikit:config name="api-config" raml="api.raml" consoleEnabled="true" consolePath="console" doc:name="Router" />
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8082" doc:name="HTTP Listener Configuration"/>
     <flow name="api-main">
-        <http:listener config-ref="http-lc-0.0.0.0-8081" path="/api/*" doc:name="HTTP" />
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/api/*" doc:name="HTTP" />
         <apikit:router config-ref="api-config" doc:name="APIkit Router" />
         <exception-strategy ref="api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy" />
-    </flow>
-    <flow name="post:/checkCredit:application/json:api-config">
-        <set-payload value="{&#xA;  &quot;firstName&quot;: &quot;James&quot;,&#xA;  &quot;middleInitial&quot;: &quot;&quot;,&#xA;  &quot;lastName&quot;: &quot;Johnson&quot;,&#xA;  &quot;individualTaxIdNumber&quot;: &quot;312-22-1234&quot;,&#xA;  &quot;address1&quot;: &quot;123 Main Street&quot;,&#xA;  &quot;address2&quot;: &quot;&quot;,&#xA;  &quot;city&quot;: &quot;Madison&quot;,&#xA;  &quot;state&quot;: &quot;WI&quot;,&#xA;  &quot;zipCode&quot;: &quot;54500&quot;,&#xA;  &quot;monthlyNetIncome&quot;: 5000,&#xA;  &quot;combinedFicoScore&quot;: 750,&#xA;  &quot;bureauScores&quot;: [&#xA;    {&#xA;      &quot;bureau&quot;: &quot;transunion&quot;,&#xA;      &quot;ficoScore&quot;: 750&#xA;    },&#xA;    {&#xA;      &quot;bureau&quot;: &quot;equixfax&quot;,&#xA;      &quot;ficoScore&quot;: 750&#xA;    },&#xA;    {&#xA;      &quot;bureau&quot;: &quot;experian&quot;,&#xA;      &quot;ficoScore&quot;: 750&#xA;    }&#xA;  ]&#xA;}" doc:name="Set Payload" />
     </flow>
     <flow name="get:/score:api-config">
         <set-payload value="{&#xA;  &quot;firstName&quot;: &quot;James&quot;,&#xA;  &quot;middleInitial&quot;: &quot;&quot;,&#xA;  &quot;lastName&quot;: &quot;Johnson&quot;,&#xA;  &quot;individualTaxIdNumber&quot;: &quot;312-22-1234&quot;,&#xA;  &quot;address1&quot;: &quot;123 Main Street&quot;,&#xA;  &quot;address2&quot;: &quot;&quot;,&#xA;  &quot;city&quot;: &quot;Madison&quot;,&#xA;  &quot;state&quot;: &quot;WI&quot;,&#xA;  &quot;zipCode&quot;: &quot;54500&quot;,&#xA;  &quot;monthlyNetIncome&quot;: 5000,&#xA;  &quot;combinedFicoScore&quot;: 750,&#xA;  &quot;bureauScores&quot;: [&#xA;    {&#xA;      &quot;bureau&quot;: &quot;transunion&quot;,&#xA;      &quot;ficoScore&quot;: 750&#xA;    },&#xA;    {&#xA;      &quot;bureau&quot;: &quot;equixfax&quot;,&#xA;      &quot;ficoScore&quot;: 750&#xA;    },&#xA;    {&#xA;      &quot;bureau&quot;: &quot;experian&quot;,&#xA;      &quot;ficoScore&quot;: 750&#xA;    }&#xA;  ]&#xA;}" doc:name="Set Payload"/>
     </flow>
     <flow name="post:/scores:application/json:api-config">
-        <set-payload value="{&#xA;  &quot;firstName&quot;: &quot;James&quot;,&#xA;  &quot;middleInitial&quot;: &quot;&quot;,&#xA;  &quot;lastName&quot;: &quot;Johnson&quot;,&#xA;  &quot;individualTaxIdNumber&quot;: &quot;312-22-1234&quot;,&#xA;  &quot;address1&quot;: &quot;123 Main Street&quot;,&#xA;  &quot;address2&quot;: &quot;&quot;,&#xA;  &quot;city&quot;: &quot;Madison&quot;,&#xA;  &quot;state&quot;: &quot;WI&quot;,&#xA;  &quot;zipCode&quot;: &quot;54500&quot;,&#xA;  &quot;monthlyNetIncome&quot;: 5000,&#xA;  &quot;combinedFicoScore&quot;: 750,&#xA;  &quot;bureauScores&quot;: [&#xA;    {&#xA;      &quot;bureau&quot;: &quot;transunion&quot;,&#xA;      &quot;ficoScore&quot;: 750&#xA;    },&#xA;    {&#xA;      &quot;bureau&quot;: &quot;equixfax&quot;,&#xA;      &quot;ficoScore&quot;: 750&#xA;    },&#xA;    {&#xA;      &quot;bureau&quot;: &quot;experian&quot;,&#xA;      &quot;ficoScore&quot;: 750&#xA;    }&#xA;  ]&#xA;}" doc:name="Set Payload"/>
+        <scatter-gather doc:name="Scatter-Gather">
+            <flow-ref name="transunion_Flow" doc:name="transunion_Flow"/>
+            <flow-ref name="equifax_Flow" doc:name="equifax_Flow"/>
+        </scatter-gather>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="e0c7f12d-48b4-4b76-9205-88710a2a3e62">
+            <dw:input-payload doc:sample="list_json.json" mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	firstName: payload.firstName[0],
+	middleInitial: payload.middleInitial[0],
+	lastName: payload.lastName[0],
+	individualTaxIdNumber: payload.individualTaxIdNumber[0],
+	address1: payload.address1[0],
+	address2: payload.address2[0],
+	city: payload.city[0],
+	state: payload.state[0],
+	zipCode: payload.zipCode[0],
+	monthlyNetIncome: payload.monthlyNetIncome[0],
+	combinedFicoScore: (payload.ficoScore[0] + payload.ficoScore[1] + 750)/3 as :number as :string {format:"##.##"},
+	bureauScores: [{
+		bureau: payload.bureau[0],
+		ficoScore: payload.ficoScore[0]
+	},
+    {
+		bureau: payload.bureau[1],
+		ficoScore: payload.ficoScore[1]
+	},
+    {
+		"bureau": "experian",
+		"ficoScore": 750
+	}
+	]
+}]]></dw:set-payload>
+        </dw:transform-message>
     </flow>
+    <flow name="transunion_Flow">
+        <object-to-string-transformer doc:name="Object to String"/>
+        <request-reply doc:name="Request-Reply">
+            <wmq:outbound-endpoint queue="sl.trans_union.request" doc:name="WMQ" connector-ref="WMQ" mimeType="application/json"/>
+            <wmq:inbound-endpoint queue="sl.trans_union.response" doc:name="WMQ" connector-ref="WMQ"/>
+        </request-reply>
+        <tracking:custom-event event-name="Transunion Response" doc:name="Custom Business Event"/>
+        
+        <wmq:message-info-mapping/>
+    </flow>
+    <flow name="equifax_Flow">
+        <object-to-string-transformer doc:name="Object to String"/>
+        <request-reply doc:name="Request-Reply">
+            <wmq:outbound-endpoint queue="sl.equifax.request" connector-ref="WMQ" doc:name="WMQ" mimeType="application/json"/>
+            <wmq:inbound-endpoint queue="sl.equifax.response" connector-ref="WMQ" doc:name="WMQ"/>
+        </request-reply>
+        <tracking:custom-event event-name="Equifax Response" doc:name="Custom Business Event"/>
+        
+        <wmq:message-info-mapping/>
+    </flow>
+    <!-- <flow name="apiFlow">
+        <scripting:transformer doc:name="Groovy">
+            <scripting:script engine="Groovy"><![CDATA[String s = String.format("%-12.5f%.20f", 12.23429837482,9.10212023134);
+]]></scripting:script>
+        </scripting:transformer>
+        <object-to-string-transformer doc:name="Object to String"/>
+    </flow> -->
+    
     <apikit:mapping-exception-strategy name="api-apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
