@@ -1,0 +1,12 @@
+{
+"firstName": "James",
+  "middleInitial": "",
+  "lastName": "Johnson",
+  "individualTaxIdNumber": "312-22-1234",
+  "address1": "123 Main Street",
+  "address2": "",
+  "city": "Madison",
+  "state": "WI",
+  "zipCode": "54500",
+  "monthlyNetIncome": 5000
+}

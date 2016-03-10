@@ -1,0 +1,18 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "transunion_request"
+        }
+    },
+    "outputMessageMetadata": {
+        "flowVariables": {
+            "originalRequest": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "transunion_request"
+            }
+        }
+    },
+    "id": "837b7e18-4aa1-4029-916c-606db2073036",
+    "version": "5.2.0.0"
+}
