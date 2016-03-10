@@ -49,8 +49,7 @@
 	    },
 	    "monthly_net_income": 4000,
 	    "savings_checkings": "both"
-	  }
-	},
+	  },
 	"loan_status": "pre-approved",
 	"loan_application_id": "1234"
 }
