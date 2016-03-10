@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+    <http:request-config name="api-proc-credit-decision-http-config" host="www.mythicalfinance.com" port="80"  doc:name="HTTP Request Configuration" basePath="/api/proc/credit-decision">
+        <http:raml-api-configuration location="api-proc-credit-decision.raml"/>
+    </http:request-config>
+    <http:request-config name="api-sys-application-http-config" host="www.mythicalfinance.com" port="80" basePath="/api/sys/application" doc:name="HTTP Request Configuration">
+        <http:raml-api-configuration location="api-sys-application.raml"/>
+    </http:request-config>
+    <flow name="api-proc-process-application-eval-application">
+        <http:request config-ref="api-sys-application-http-config" path="/application" method="POST" doc:name="Store Applicant Information"/>
+        <http:request config-ref="api-proc-credit-decision-http-config" path="/decision" method="POST" doc:name="Evaluate Applicants Credit Worthiness"/>
+    </flow>
+</mule>

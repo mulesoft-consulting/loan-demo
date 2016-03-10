@@ -7,7 +7,8 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
     <context:property-placeholder location="api.properties" />
     <apikit:config name="apiConfig" raml="api-exp-recv-application.raml" consoleEnabled="true" consolePath="console" doc:name="Router" disableValidations="true"/>
-    <flow name="main">
+
+   <flow name="main">
         <http:listener config-ref="http-lc-0.0.0.0-8081" doc:name="HTTP" path="/api/*" />
         <apikit:router config-ref="apiConfig" doc:name="APIkit Router" />
         <exception-strategy ref="apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy" />

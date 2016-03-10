@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry exported="true" kind="con" path="MULE_RUNTIME/org.mule.tooling.apigateway.2.1.0"/>
 	<classpathentry kind="src" path="src/main/app"/>
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/main/resources"/>
@@ -12,5 +11,12 @@
 	<classpathentry kind="src" path="src/main/api"/>
 	<classpathentry kind="con" path="MULE_LIB/APIkit/org.mule.tooling.apikit.3.7.0"/>
 	<classpathentry kind="src" path="/api-sys-zgateway_2_1_0"/>
+	<classpathentry kind="src" path="mappings"/>
+	<classpathentry kind="lib" path="/Users/federicobarreraoro/Public/com.ibm.mq.headers.jar"/>
+	<classpathentry kind="lib" path="/Users/federicobarreraoro/Public/com.ibm.mq.jar"/>
+	<classpathentry kind="lib" path="/Users/federicobarreraoro/Public/com.ibm.mq.jmqi.jar"/>
+	<classpathentry kind="lib" path="/Users/federicobarreraoro/Public/com.ibm.mqjms.jar"/>
+	<classpathentry kind="lib" path="/Users/federicobarreraoro/Public/dhbcore.jar"/>
+	<classpathentry exported="true" kind="con" path="MULE_RUNTIME/org.mule.tooling.apigateway.2.2.0"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

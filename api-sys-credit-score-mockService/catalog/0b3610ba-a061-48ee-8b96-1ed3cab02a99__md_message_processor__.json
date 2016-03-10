@@ -1,0 +1,16 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "ficoScore"
+        }
+    },
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "transunion_consumer_response2"
+        }
+    },
+    "id": "0b3610ba-a061-48ee-8b96-1ed3cab02a99",
+    "version": "5.2.0.0"
+}
