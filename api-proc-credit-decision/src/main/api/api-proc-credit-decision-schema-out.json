@@ -3,6 +3,10 @@
   "id": "http://jsonschema.net",
   "type": "object",
   "properties": {
+    "authorization": {
+      "id": "http://jsonschema.net/firstName",
+      "enum": [ "approved", "denied", "pre-approved" ]
+    },
     "firstName": {
       "id": "http://jsonschema.net/firstName",
       "type": "string"
