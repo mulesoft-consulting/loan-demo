@@ -6,9 +6,8 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
     <context:property-placeholder location="api.properties" />
     <apikit:config name="apiConfig" raml="api.raml" consoleEnabled="true" consolePath="console" doc:name="Router" />
-    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="${http.port}" doc:name="HTTP Listener Configuration" />
     <flow name="main">
-        <http:listener config-ref="HTTP_Listener_Configuration" doc:name="HTTP" path="/api/*" />
+        <http:listener config-ref="http-lc-0.0.0.0-8081" doc:name="HTTP" path="/api/exp/*" />
         <apikit:router config-ref="apiConfig" doc:name="APIkit Router" />
         <exception-strategy ref="apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy" />
     </flow>
