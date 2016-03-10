@@ -1,8 +1,156 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "http://jsonschema.net",
-  "type": "object",
-  "properties": {
-    "loan_app": { "$ref": "url://loan-application-schema.json/#/definitions/loan_app" }
-  }
+	"$schema": "http://json-schema.org/draft-04/schema#",
+  	"type": "object",
+ 	"properties": {
+ 	    "loan_app": {
+ 			"type" : "object",
+ 			"id" : "http://jsonschema.net/loan_app_root#loan_app",
+ 			"properties" : {
+ 				"loan_amount" : {
+ 					"id" : "http://jsonschema.net/loan_app_root#loan_amount",
+ 					"type" : "integer"
+ 				},
+ 				"loan_purpose" : {
+ 					"id" : "http://jsonschema.net/loan_app_root#loan_purpose",
+ 					"type" : "string"
+ 				},
+ 				"offerNumber" : {
+ 					"id" : "http://jsonschema.net/loan_app_root#offerNumber",
+ 					"type" : "string"
+ 				},
+ 				"first_name" : {
+ 					"id" : "http://jsonschema.net/loan_app_root#first_name",
+ 					"type" : "string"
+ 				},
+ 				"middle_initial" : {
+ 					"id" : "http://jsonschema.net/loan_app_root#middle_initial",
+ 					"type" : "string"
+ 				},
+ 				"last_name" : {
+ 					"id" : "http://jsonschema.net/loan_app_root#last_name",
+ 					"type" : "string"
+ 				},
+ 				"birth_date" : {
+ 					"id" : "http://jsonschema.net/loan_app_root#birth_date",
+ 					"type" : "string"
+ 				},
+ 				"ssn" : {
+ 					"id" : "http://jsonschema.net/loan_app_root#ssn",
+ 					"type" : "string"
+ 				},
+ 				"addresses" : {
+ 					"id" : "http://jsonschema.net/loan_app_root#addresses",
+ 					"type" : "array",
+ 					"items" : {
+ 						"key" : "address",
+ 						"Title" : "Address",
+ 						"id" : "http://jsonschema.net/loan_app_root#address",
+ 						"type" : "object",
+ 						"properties" : {
+ 							"isMailingOnly" : {
+ 								"id" : "http://jsonschema.net/loan_app_root#address/isMailingOnly",
+ 								"type" : "boolean"
+ 							},
+ 							"address1" : {
+ 								"id" : "http://jsonschema.net/loan_app_root#address/address1",
+ 								"type" : "string"
+ 							},
+ 							"address2" : {
+ 								"id" : "http://jsonschema.net/loan_app_root#address/address2",
+ 								"type" : "string"
+ 							},
+ 							"city" : {
+ 								"id" : "http://jsonschema.net/loan_app_root#address/city",
+ 								"type" : "string"
+ 							},
+ 							"state" : {
+ 								"id" : "http://jsonschema.net/loan_app_root#address/state",
+ 								"type" : "string"
+ 							},
+ 							"zip" : {
+ 								"id" : "http://jsonschema.net/loan_app_root#address/zip",
+ 								"type" : "integer"
+ 							},
+ 							"moveIn_date" : {
+ 								"id" : "http://jsonschema.net/loan_app_root#address/moveIn_date",
+ 								"type" : "string"
+ 							}
+ 						}
+ 					}
+ 				},
+ 				"email_address" : {
+ 					"id" : "http://jsonschema.net/loan_app_root#email_address",
+ 					"type" : "string"
+ 				},
+ 				"contact_numbers" : {
+ 					"id" : "http://jsonschema.net/loan_app_root#contact_numbers",
+ 					"type" : "array",
+ 					"items" : {
+ 						"id" : "http://jsonschema.net/loan_app_root#contact_number",
+ 						"type" : "object",
+ 						"properties" : {
+ 							"isPrimary" : {
+ 								"id" : "http://jsonschema.net/loan_app_root#contact_number/isPrimary",
+ 								"type" : "boolean"
+ 							},
+ 							"phone_number" : {
+ 								"id" : "http://jsonschema.net/loan_app_root#contact_number/phone_number",
+ 								"type" : "string"
+ 							},
+ 							"type" : {
+ 								"id" : "http://jsonschema.net/loan_app_root#contact_number/type",
+ 								"type" : "string"
+ 							}
+ 						}
+ 					}
+ 				},
+ 				"financial_information" : {
+ 					"id" : "http://jsonschema.net/loan_app_root#financial_information",
+ 					"type" : "object",
+ 					"properties" : {
+ 						"retired" : {
+ 							"id" : "http://jsonschema.net/loan_app_root#financial_information/retired",
+ 							"type" : "boolean"
+ 						},
+ 						"self_employed" : {
+ 							"id" : "http://jsonschema.net/loan_app_root#financial_information/self_employed",
+ 							"type" : "boolean"
+ 						},
+ 						"employer" : {
+ 							"id" : "http://jsonschema.net/loan_app_root#financial_information/employer",
+ 							"type" : "object",
+ 							"properties" : {
+ 								"name" : {
+ 									"id" : "http://jsonschema.net/loan_app_root#financial_information/employer/name",
+ 									"type" : "string"
+ 								},
+ 								"hire_date" : {
+ 									"id" : "http://jsonschema.net/loan_app_root#financial_information/employer/hire_date",
+ 									"type" : "string"
+ 								}
+ 							}
+ 						},
+ 						"monthly_net_income" : {
+ 							"id" : "http://jsonschema.net/loan_app_root#financial_information/monthly_net_income",
+ 							"type" : "integer"
+ 						},
+ 						"savings_checkings" : {
+ 							"id" : "http://jsonschema.net/loan_app_root#financial_information/savings_checkings",
+ 							"type" : "string"
+ 						}
+ 					}
+ 				},
+ 				"loan_status" : {
+ 					"id" : "http://jsonschema.net/loan_app_root#loan_status",
+ 					"enum" : [ "pre-approved",
+ 							"in-progress", "underwriting",
+ 							"approved" ]
+ 				},
+ 				"loan_application_id" : {
+ 					"id" : "http://jsonschema.net/loan_app_root#loan_application_id",
+ 					"type" : "string"
+ 				}
+ 			}
+ 		}
+	}
 }
