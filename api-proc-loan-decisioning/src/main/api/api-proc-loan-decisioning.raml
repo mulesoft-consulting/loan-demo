@@ -1,0 +1,20 @@
+#%RAML 0.8
+
+title: Underwrite Loan Experience API
+baseUri: http://www.mythicalfinance.com/api/proc/loan-decisioning
+version: 1.0
+
+/decison:
+  /{loan_application_id}:
+    uriParameters: 
+      loan_application_id:
+        required: true
+        type: string
+        
+    post: 
+      responses: 
+        200: 
+          body: 
+            application/json:
+              schema: !include api-proc-loan-decisioning-schema.json
+              example: !include api-proc-loan-decisioning-example.json

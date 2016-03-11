@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+    <apikit:config name="api-sys-account-config" raml="api-sys-account.raml" consoleEnabled="true" consolePath="console" doc:name="Router"/>
+    <flow name="api-sys-account-main">
+        <http:listener config-ref="http-lc-0.0.0.0-8081" path="/api/*" doc:name="HTTP"/>
+        <apikit:router config-ref="api-sys-account-config" doc:name="APIkit Router"/>
+        <exception-strategy ref="api-sys-account-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="post:/account:application/json:api-sys-account-config">
+        <set-payload value="{&#xA;  &quot;loanDecisionDate&quot;: &quot;2016-01-20&quot;,&#xA;  &quot;applicationOriginationDate&quot;: &quot;2016-01-05&quot;,&#xA;  &quot;applicationDecisionStatus&quot;: &quot;pre-approved&quot;,&#xA;  &quot;loanAccountStatus&quot;: &quot;new&quot;,&#xA;  &quot;loanAccountSubStatus&quot;: &quot;new&quot;,&#xA;  &quot;noteNumber&quot;: &quot;1111&quot;,&#xA;  &quot;category&quot;: &quot;home&quot;,&#xA;  &quot;purposeCode&quot;: &quot;123&quot;,&#xA;  &quot;requestedAmount&quot;: &quot;200000&quot;,&#xA;  &quot;noteAmount&quot;: &quot;210000&quot;,&#xA;  &quot;creditLimit&quot;: &quot;250000&quot;,&#xA;  &quot;creditLimitExpiration&quot;: &quot;2035-01-20&quot;,&#xA;  &quot;creditLimitGroupCode&quot;: &quot;123&quot;,&#xA;  &quot;creditReportingCode&quot;: &quot;123&quot;,&#xA;  &quot;isRevolvingLineOfCredit&quot;: &quot;false&quot;,&#xA;  &quot;minimumAdvanceAmount&quot;: &quot;&quot;,&#xA;  &quot;maximumAdvanceAmount&quot;: &quot;&quot;,&#xA;  &quot;originationDate&quot;: &quot;2016-01-05&quot;,&#xA;  &quot;disbursalDate&quot;: &quot;2016-01-10&quot;,&#xA;  &quot;creationDate&quot;: &quot;2016-01-20&quot;,&#xA;  &quot;term&quot;: &quot;15&quot;,&#xA;  &quot;combinedCreditScore&quot;: &quot;785&quot;,&#xA;  &quot;loanInterestRateDetail&quot;: &quot;.036&quot;,&#xA;  &quot;paymentOption&quot;: &quot;monthly&quot;,&#xA;  &quot;dailyPeriodicRate&quot;: &quot;&quot;,&#xA;  &quot;totalNumberOfPayments&quot;: &quot;180&quot;,&#xA;  &quot;prePaidFinanceCharges&quot;: &quot;&quot;,&#xA;  &quot;prepaidInterest&quot;: &quot;&quot;,&#xA;  &quot;interestPaidThruDate&quot;: &quot;&quot;,&#xA;  &quot;numberOfGraceDays&quot;: &quot;&quot;,&#xA;  &quot;balloonAmount&quot;: &quot;&quot;,&#xA;  &quot;balloonDueDate&quot;: &quot;&quot;,&#xA;  &quot;balloonDueDateTermValue&quot;: &quot;&quot;,&#xA;  &quot;prepaymentPenaltyBasisAmount&quot;: &quot;&quot;,&#xA;  &quot;prepaymentPenaltyPercentage&quot;: &quot;&quot;,&#xA;  &quot;prepaymentPenaltyExpirationDate&quot;: &quot;&quot;,&#xA;  &quot;statementCode&quot;: &quot;&quot;,&#xA;  &quot;statementGroup&quot;: &quot;&quot;,&#xA;  &quot;statementDate&quot;: &quot;&quot;,&#xA;  &quot;debtIncomeRatio&quot;: &quot;.43&quot;&#xA;}" doc:name="Set Payload"/>
+    </flow>
+    <apikit:mapping-exception-strategy name="api-sys-account-apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+</mule>

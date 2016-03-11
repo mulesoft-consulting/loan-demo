@@ -9,6 +9,6 @@
 	<classpathentry kind="src" path="src/test/munit"/>
 	<classpathentry kind="src" path="src/main/api"/>
 	<classpathentry exported="true" kind="con" path="MULE_RUNTIME/org.mule.tooling.apigateway.2.2.0"/>
-	<classpathentry kind="src" path="/api-gateway_2_2_0"/>
+	<classpathentry kind="src" path="/api-sys-zgateway_2_2_0"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

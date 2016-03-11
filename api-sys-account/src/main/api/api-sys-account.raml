@@ -1,0 +1,21 @@
+#%RAML 0.8
+
+title: Account System API
+baseUri: http://www.mythicalfinance.com/api/sys/account
+version: 1.0
+schemas: 
+  - loan-account: !include api-sys-account-schema.json
+
+/account:
+  post: 
+    body:   
+      application/json: 
+        schema: loan-account
+        example: !include api-sys-account-example.json
+        
+    responses: 
+      200:
+        body: 
+          application/json: 
+            schema: loan-account
+            example: !include api-sys-account-example.json

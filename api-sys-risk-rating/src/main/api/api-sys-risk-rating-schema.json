@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://jsonschema.net",
+  "type": "object",
+  "properties": {
+    "authorization": {
+      "id": "http://jsonschema.net/firstName",
+      "enum": [ "approved", "denied", "pre-approved" ]
+    },
+    "firstName": {
+      "id": "http://jsonschema.net/firstName",
+      "type": "string"
+    },
+    "middleInitial": {
+      "id": "http://jsonschema.net/middleInitial",
+      "type": "string"
+    },
+    "lastName": {
+      "id": "http://jsonschema.net/lastName",
+      "type": "string"
+    },
+    "individualTaxIdNumber": {
+      "id": "http://jsonschema.net/individualTaxIdNumber",
+      "type": "string"
+    },
+    "address1": {
+      "id": "http://jsonschema.net/address1",
+      "type": "string"
+    },
+    "address2": {
+      "id": "http://jsonschema.net/address2",
+      "type": "string"
+    },
+    "city": {
+      "id": "http://jsonschema.net/city",
+      "type": "string"
+    },
+    "state": {
+      "id": "http://jsonschema.net/state",
+      "type": "string"
+    },
+    "zipCode": {
+      "id": "http://jsonschema.net/zipCode",
+      "type": "string"
+    },
+    "monthlyNetIncome": {
+      "id": "http://jsonschema.net/monthlyNetIncome",
+      "type": "integer"
+    },
+    "combinedFicoScore": {
+      "id": "http://jsonschema.net/combinedFicoScore",
+      "type": "integer"
+    },
+    "bureauScores": {
+      "id": "http://jsonschema.net/bureauScores",
+      "type": "array",
+      "items": [
+        {
+          "id": "http://jsonschema.net/bureauScores/0",
+          "type": "object",
+          "properties": {
+            "bureau": {
+              "id": "http://jsonschema.net/bureauScores/0/bureau",
+              "type": "string"
+            },
+            "ficoScore": {
+              "id": "http://jsonschema.net/bureauScores/0/ficoScore",
+              "type": "integer"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "required": [
+    "firstName",
+    "middleInitial",
+    "lastName",
+    "individualTaxIdNumber",
+    "address1",
+    "address2",
+    "city",
+    "state",
+    "zipCode",
+    "monthlyNetIncome",
+    "combinedFicoScore",
+    "bureauScores"
+  ]
+}
