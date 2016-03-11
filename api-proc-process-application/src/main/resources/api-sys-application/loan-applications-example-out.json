@@ -1,4 +1,5 @@
-{
+[
+ {
   "loan_app": {
 	  "loan_amount": 5000,
 	  "loan_purpose": "Bill Consolidation",
@@ -54,3 +55,4 @@
 	"loan_status": "pre-approved",
 	"loan_application_id": "1234"
 }
+]

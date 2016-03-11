@@ -10,11 +10,11 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
     <http:request-config name="api-proc-credit-decision-http-config" host="www.mythicalfinance.com" port="80"  doc:name="HTTP Request Configuration" basePath="/api/proc/credit-decision">
         <http:raml-api-configuration location="api-proc-credit-decision.raml"/>
     </http:request-config>
-    <http:request-config name="api-sys-application-http-config" host="www.mythicalfinance.com" port="80" basePath="/api/sys/application" doc:name="HTTP Request Configuration">
-        <http:raml-api-configuration location="api-sys-application.raml"/>
+    <http:request-config name="api-sys-application-http-config" host="www.mythicalfinance.com" port="80"  doc:name="HTTP Request Configuration" basePath="/api/sys/application">
+        <http:raml-api-configuration location="api-sys-application/api-sys-application.raml"/>
     </http:request-config>
     <flow name="api-proc-process-application-eval-application">
-        <http:request config-ref="api-sys-application-http-config" path="/application" method="POST" doc:name="Store Applicant Information"/>
-        <http:request config-ref="api-proc-credit-decision-http-config" path="/decision" method="POST" doc:name="Evaluate Applicants Credit Worthiness"/>
+        <http:request config-ref="api-proc-credit-decision-http-config" path="/decision" method="POST" target="#[flowVars.creditEvalResponse]" doc:name="Evaluate Applicants Credit Worthiness"/>
+        <http:request config-ref="api-sys-application-http-config" path="/application" method="POST" doc:name="Store Applicant Information" target="#[flowVars.applicationResponse]"/>
     </flow>
 </mule>

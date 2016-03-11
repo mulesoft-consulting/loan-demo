@@ -8,6 +8,14 @@ schemas:
     loan_apps_out: !include loan-applications-schema-out.json
     
 /application:
+  get:
+    responses:
+      200:
+        body: 
+          application/json:
+            schema: loan_apps_out 
+            example: !include loan-applications-example-out.json
+
   post: 
     body: 
       application/json: 
@@ -29,12 +37,3 @@ schemas:
             application/json: 
               example: !include loan-application-example-out.json
               schema: loan_app_out
-             
-/applications:
-  get:
-    responses:
-      200:
-        body: 
-          application/json:
-            schema: loan_apps_out  
-            
