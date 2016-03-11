@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src/main/app"/>
 	<classpathentry kind="src" path="src/test/munit"/>
-	<classpathentry kind="lib" path="/Users/john.joseph/Google Drive/demo_assets/mysql-connector-java-5.1.36-bin.jar"/>
+	<classpathentry kind="lib" path="src/main/app/lib/mysql-connector-java-5.1.38-bin.jar"/>
 	<classpathentry kind="src" path="src/main/api"/>
 	<classpathentry kind="src" path="src/main/wsdl"/>
 	<classpathentry kind="src" path="src/main/java"/>
