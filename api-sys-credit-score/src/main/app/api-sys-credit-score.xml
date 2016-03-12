@@ -9,10 +9,9 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
 http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
 	<wmq:connector name="WMQ" hostName="${mq.hostname}" port="${mq.port}" queueManager="${mq.queueManager}" channel="${mq.channel}" username="${mq.username}" transportType="CLIENT_MQ_TCPIP" specification="1.1" validateConnections="true" doc:name="WMQ"/>
-    <apikit:config name="api-config" raml="api.raml" consoleEnabled="true" consolePath="console" doc:name="Router" />
-    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8082" doc:name="HTTP Listener Configuration"/>
+    <apikit:config name="api-config" raml="api-sys-credit-score.raml" consoleEnabled="true" consolePath="console" doc:name="Router" />
     <flow name="api-main">
-        <http:listener config-ref="HTTP_Listener_Configuration" path="/api/*" doc:name="HTTP" />
+        <http:listener config-ref="http-lc-0.0.0.0-8081" path="/api/*" doc:name="HTTP" />
         <apikit:router config-ref="api-config" doc:name="APIkit Router" />
         <exception-strategy ref="api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy" />
     </flow>
@@ -22,35 +21,38 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
             <flow-ref name="equifax_Flow" doc:name="equifax_Flow"/>
             <flow-ref name="experian_Flow" doc:name="experian_Flow"/>
         </scatter-gather>
-        <object-to-string-transformer doc:name="Object to String"/>
-        <dw:transform-message doc:name="Transform Message" metadata:id="e0c7f12d-48b4-4b76-9205-88710a2a3e62">
+        <set-variable variableName="transunion" value="#[payload[0]]" mimeType="application/json" doc:name="transunion"/>
+        <set-variable variableName="equifax" value="#[payload[1]]" mimeType="application/json" doc:name="equifax"/>
+        <set-variable variableName="experian" value="#[payload[2]]" mimeType="application/json" doc:name="experian"/>
+        <dw:transform-message doc:name="Create response" metadata:id="e0c7f12d-48b4-4b76-9205-88710a2a3e62">
             <dw:input-payload doc:sample="list_json.json" mimeType="application/json"/>
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/json
+%var data = flowVars.equifax
 ---
 {
-	firstName: payload.firstName[0],
-	middleInitial: payload.middleInitial[0],
-	lastName: payload.lastName[0],
-	individualTaxIdNumber: payload.individualTaxIdNumber[0],
-	address1: payload.address1[0],
-	address2: payload.address2[0],
-	city: payload.city[0],
-	state: payload.state[0],
-	zipCode: payload.zipCode[0],
-	monthlyNetIncome: payload.monthlyNetIncome[0],
-	combinedFicoScore: (payload.ficoScore[0] + payload.ficoScore[1] + payload.ficoScore[2])/3 as :number as :string {format:"##.##"},
+	firstName: data.firstName,
+	middleInitial: data.middleInitial,
+	lastName: data.lastName,
+	individualTaxIdNumber: data.individualTaxIdNumber,
+	address1: data.address1,
+	address2: data.address2,
+	city: data.city,
+	state: data.state,
+	zipCode: data.zipCode,
+	monthlyNetIncome: data.monthlyNetIncome,
+	combinedFicoScore: (flowVars.equifax.ficoScore + flowVars.transunion.ficoScore + flowVars.experian.ficoScore)/3 as :number as :string {format:"##.##"},
 	bureauScores: [{
-		bureau: payload.bureau[0],
-		ficoScore: payload.ficoScore[0]
+		bureau: flowVars.equifax.bureau,
+		ficoScore: flowVars.equifax.ficoScore
 	},
     {
-		bureau: payload.bureau[1],
-		ficoScore: payload.ficoScore[1]
+		bureau: flowVars.transunion.bureau,
+		ficoScore: flowVars.transunion.ficoScore
 	},
     {
-		"bureau": payload.bureau[2],
-		"ficoScore": payload.ficoScore[2]
+		"bureau": trim flowVars.experian.bureau,
+		"ficoScore": flowVars.experian.ficoScore
 	}
 	]
 }]]></dw:set-payload>
@@ -58,7 +60,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
     </flow>
     <flow name="transunion_Flow">
         <object-to-string-transformer doc:name="Object to String"/>
-        <request-reply doc:name="Request-Reply">
+        <request-reply doc:name="Request-Reply" timeout="30000">
             <wmq:outbound-endpoint queue="sl.trans_union.request" doc:name="WMQ" connector-ref="WMQ" mimeType="application/json"/>
             <wmq:inbound-endpoint queue="sl.trans_union.response" doc:name="WMQ" connector-ref="WMQ"/>
         </request-reply>
@@ -68,7 +70,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
     </flow>
     <flow name="equifax_Flow">
         <object-to-string-transformer doc:name="Object to String"/>
-        <request-reply doc:name="Request-Reply">
+        <request-reply doc:name="Request-Reply" timeout="30000">
             <wmq:outbound-endpoint queue="sl.equifax.request" connector-ref="WMQ" doc:name="WMQ" mimeType="application/json"/>
             <wmq:inbound-endpoint queue="sl.equifax.response" connector-ref="WMQ" doc:name="WMQ"/>
         </request-reply>
@@ -77,7 +79,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
         <wmq:message-info-mapping/>
     </flow>
      <flow name="experian_Flow">
-        <dw:transform-message metadata:id="6c596be6-ab18-441f-bd5f-fc2626eac120" doc:name="Transform Message">
+        <dw:transform-message metadata:id="6c596be6-ab18-441f-bd5f-fc2626eac120" doc:name="Create plain request">
             <dw:input-payload doc:sample="json.json"/>
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/java
@@ -97,13 +99,13 @@ s+=payload['zipCode']?payload['zipCode'].padRight(5):"".padRight(5)
 s+=payload['monthlyNetIncome']?String.format("%010d",payload['monthlyNetIncome']):"".padLeft(10,"0")
 ]]></scripting:script>
         </scripting:transformer>
-        <request-reply doc:name="Request-Reply">
+        <request-reply doc:name="Request-Reply" timeout="30000">
             <wmq:outbound-endpoint queue="sl.experian.request" connector-ref="WMQ" doc:name="WMQ"/>
             <wmq:inbound-endpoint queue="sl.experian.response" connector-ref="WMQ" doc:name="WMQ"/>
         </request-reply>
         <tracking:custom-event event-name="Experience Response" doc:name="Custom Business Event"/>
         
-        <dw:transform-message metadata:id="119d5c17-32c5-44f5-b84e-01b610eef969" doc:name="Transform Message">
+        <dw:transform-message metadata:id="119d5c17-32c5-44f5-b84e-01b610eef969" doc:name="Create JSON response">
         	<dw:input-payload doc:sample="string.json" mimeType="application/java"/>
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/json

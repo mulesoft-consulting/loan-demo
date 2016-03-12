@@ -16,6 +16,7 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
 	<wmq:connector name="WMQ" hostName="${mq.hostname}" port="${mq.port}" queueManager="${mq.queueManager}" channel="${mq.channel}" username="${mq.username}" transportType="CLIENT_MQ_TCPIP" specification="1.1" validateConnections="true" doc:name="WMQ"/>
 	<flow name="trans-union_flow">
         <wmq:inbound-endpoint queue="sl.trans_union.request" connector-ref="WMQ" metadata:id="0886ce19-079e-4901-befd-88abc6c875a5" doc:name="WMQ" mimeType="application/json"/>
+        <logger message="=== PROCESSING Trans Union ===" level="INFO" doc:name="Logger"/>
         <dw:transform-message doc:name="Transform Message" metadata:id="837b7e18-4aa1-4029-916c-606db2073036">
             <dw:input-payload doc:sample="json.json" mimeType="application/json"/>
             <dw:set-payload><![CDATA[%dw 1.0
@@ -54,9 +55,11 @@ return sum % 1000]]></scripting:script>
 }]]></dw:set-payload>
         </dw:transform-message>
         <object-to-string-transformer doc:name="Object to String"/>
+        <logger message="=== END PROCESSING Trans Union ===" level="INFO" doc:name="Logger"/>
     </flow>
     <flow name="equifax_flow">
         <wmq:inbound-endpoint queue="sl.equifax.request" connector-ref="WMQ" metadata:id="b2bd287f-ec7a-433f-89e5-da1798ff91be" doc:name="WMQ" mimeType="application/json"/>
+        <logger message="=== PROCESSING Equifax ===" level="INFO" doc:name="Logger"/>
         <dw:transform-message doc:name="Transform Message" metadata:id="02d53772-f5dc-40a8-afd5-45923a859c53">
             <dw:input-payload doc:sample="json_1.json" mimeType="application/json"/>
             <dw:set-payload><![CDATA[%dw 1.0
@@ -94,9 +97,11 @@ return sum % 1000]]></scripting:script>
 }]]></dw:set-payload>
         </dw:transform-message>
         <object-to-string-transformer doc:name="Object to String"/>
+        <logger message="=== END PROCESSING Equifax ===" level="INFO" doc:name="Logger"/>
     </flow>
     <flow name="experian_flow">
         <wmq:inbound-endpoint queue="sl.experian.request" connector-ref="WMQ" doc:name="WMQ"/>
+        <logger message="=== PROCESSING Experian ===" level="INFO" doc:name="Logger"/>
         <set-variable variableName="originalRequest" value="#[payload]" doc:name="Save Original Requet"/>
         <dw:transform-message doc:name="Transform Message" metadata:id="0ab9fc68-ba48-451f-bff1-76c42315fcea">
             <dw:input-payload doc:sample="string.dwl"/>
@@ -120,5 +125,6 @@ msg+=String.format("%04d",total)
 return msg]]></scripting:script>
         </scripting:transformer>
         <object-to-string-transformer doc:name="Object to String"/>
+        <logger message="=== END PROCESSING Experian ===" level="INFO" doc:name="Logger"/>
     </flow>
 </mule>

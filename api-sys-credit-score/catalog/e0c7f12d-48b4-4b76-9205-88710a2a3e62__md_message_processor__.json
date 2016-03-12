@@ -3,6 +3,20 @@
         "messagePayload": {
             "connectorName": "#_custom_mule_metadata_type_#",
             "typeId": "bureau_response"
+        },
+        "flowVariables": {
+            "equifax": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "bureau_response"
+            },
+            "transunion": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "bureau_response"
+            },
+            "experian": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "bureau_response"
+            }
         }
     },
     "outputMessageMetadata": {},
