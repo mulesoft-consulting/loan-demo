@@ -5,6 +5,12 @@ baseUri: http://www.mythicalfinance.com/api/sys/credit-score
 
 /scores:
   post: 
+    queryParameters: 
+      bureau:
+        displayName: Bureau
+        type: string
+        required: false
+        example: transunion
     body: 
       application/json: 
         example: !include api-sys-credit-score-example-in.json

@@ -6,17 +6,16 @@
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/resources"/>
-	
 	<classpathentry kind="src" path="src/test/munit"/>
 	<classpathentry kind="src" path="src/main/api"/>
 	<classpathentry kind="con" path="MULE_LIB/APIkit/org.mule.tooling.apikit.3.7.0"/>
 	<classpathentry kind="src" path="mappings"/>
-	<classpathentry kind="lib" path="/Users/john.joseph/Google Drive/demo_assets/com.ibm.mq.headers.jar"/>
-	<classpathentry kind="lib" path="/Users/john.joseph/Google Drive/demo_assets/com.ibm.mq.jar"/>
-	<classpathentry kind="lib" path="/Users/john.joseph/Google Drive/demo_assets/com.ibm.mq.jmqi.jar"/>
-	<classpathentry kind="lib" path="/Users/john.joseph/Google Drive/demo_assets/com.ibm.mqjms.jar"/>
-	<classpathentry kind="lib" path="/Users/john.joseph/Google Drive/demo_assets/dhbcore.jar"/>
 	<classpathentry exported="true" kind="con" path="MULE_RUNTIME/org.mule.tooling.apigateway.2.2.0"/>
 	<classpathentry kind="src" path="/api-sys-zgateway_2_2_0"/>
+	<classpathentry kind="lib" path="/Users/federicobarreraoro/Public/com.ibm.mq.headers.jar"/>
+	<classpathentry kind="lib" path="/Users/federicobarreraoro/Public/com.ibm.mq.jar"/>
+	<classpathentry kind="lib" path="/Users/federicobarreraoro/Public/com.ibm.mq.jmqi.jar"/>
+	<classpathentry kind="lib" path="/Users/federicobarreraoro/Public/com.ibm.mqjms.jar"/>
+	<classpathentry kind="lib" path="/Users/federicobarreraoro/Public/dhbcore.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
