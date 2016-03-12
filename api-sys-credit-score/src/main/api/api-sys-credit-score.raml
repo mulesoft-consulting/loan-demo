@@ -4,19 +4,25 @@ title: Credit Score System API
 baseUri: http://www.mythicalfinance.com/api/sys/credit-score
 
 /scores:
-  post: 
-    queryParameters: 
-      type:
+  post:
+    queryParameters:
+      scoreType:
+        displayName: Score Type
         enum: [hard, soft]
+        default: soft
         required: true
-    body: 
-      application/json: 
+      bureau:
+        displayName: Bureau
+        type: string
+        required: false
+        example: transunion
+    body:
+      application/json:
         example: !include api-sys-credit-score-example-in.json
         schema: !include api-sys-credit-score-schema-in.json
-    responses: 
+    responses:
       200:
-        body: 
-          application/json: 
+        body:
+          application/json:
             example: !include api-sys-credit-score-example-out.json
             schema: !include api-sys-credit-score-schema-out.json
-            
