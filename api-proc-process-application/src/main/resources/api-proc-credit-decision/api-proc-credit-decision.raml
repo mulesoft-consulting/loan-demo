@@ -1,10 +1,14 @@
 #%RAML 0.8
 
 title: Credit Decision Process API
-baseUri: http://www.mythicalfinance.com/api/proc/credit-decision
+baseUri: http://sfs-api-proc-credit-decision.cloudhub.io/api
 
 /decision:
   post:
+    queryParameters: 
+      scoreType:
+        required: true
+        enum: [hard, soft]
     body: 
       application/json:
         example: !include api-proc-credit-decision-example-in.json
@@ -15,4 +19,3 @@ baseUri: http://www.mythicalfinance.com/api/proc/credit-decision
           application/json: 
             example: !include api-proc-credit-decision-example-out.json
             schema: !include api-proc-credit-decision-schema-out.json
-            

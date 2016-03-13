@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:context="http://www.springframework.org/schema/context" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+<mule xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:context="http://www.springframework.org/schema/context" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
@@ -20,33 +20,7 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
         <set-payload value="{&#xA;  loan_app: {&#xA;&#x9;  &quot;loan_amount&quot;: 5000,&#xA;&#x9;  &quot;loan_purpose&quot;: &quot;Bill Consolidation&quot;,&#xA;&#x9;  &quot;offerNumber&quot;: &quot;1245&quot;,&#xA;&#x9;  &quot;first_name&quot;: &quot;Mike&quot;,&#xA;&#x9;  &quot;middle_initial&quot;: &quot;S&quot;,&#xA;&#x9;  &quot;last_name&quot;: &quot;Smith&quot;,&#xA;&#x9;  &quot;birth_date&quot;: &quot;04/20/1970&quot;,&#xA;&#x9;  &quot;ssn&quot;: &quot;123-44-5555&quot;,&#xA;&#x9;  &quot;addresses&quot;: [&#xA;&#x9;    {&#xA;&#x9;      &quot;isMailingOnly&quot;: false,&#xA;&#x9;      &quot;address1&quot;: &quot;123 Main Street&quot;,&#xA;&#x9;      &quot;address2&quot;: &quot;&quot;,&#xA;&#x9;      &quot;city&quot;: &quot;Chicago&quot;,&#xA;&#x9;      &quot;state&quot;: &quot;IL&quot;,&#xA;&#x9;      &quot;zip&quot;: 12345,&#xA;&#x9;      &quot;moveIn_date&quot;: &quot;05/2002&quot;&#xA;&#x9;    },&#xA;&#x9;    {&#xA;&#x9;      &quot;isMailingOnly&quot;: true,&#xA;&#x9;      &quot;address1&quot;: &quot;PO Box 1234&quot;,&#xA;&#x9;      &quot;address2&quot;: &quot;&quot;,&#xA;&#x9;      &quot;city&quot;: &quot;Chicago&quot;,&#xA;&#x9;      &quot;state&quot;: &quot;IL&quot;,&#xA;&#x9;      &quot;zip&quot;: 12345&#xA;&#x9;    }&#xA;&#x9;  ],&#xA;&#x9;  &quot;email_address&quot;: &quot;amir.kader@mulesoft.com&quot;,&#xA;&#x9;  &quot;contact_numbers&quot;: [&#xA;&#x9;    {&#xA;&#x9;      &quot;isPrimary&quot;: true,&#xA;&#x9;      &quot;phone_number&quot;: &quot;312-111-2233&quot;,&#xA;&#x9;      &quot;type&quot;: &quot;mobile&quot;&#xA;&#x9;    },&#xA;&#x9;    {&#xA;&#x9;      &quot;isPrimary&quot;: false,&#xA;&#x9;      &quot;phone_number&quot;: &quot;312-222-2233&quot;,&#xA;&#x9;      &quot;type&quot;: &quot;home&quot;&#xA;&#x9;    }&#xA;&#x9;  ],&#xA;&#x9;  &quot;financial_information&quot;: {&#xA;&#x9;    &quot;retired&quot;: false,&#xA;&#x9;    &quot;self_employed&quot;: false,&#xA;&#x9;    &quot;employer&quot;: {&#xA;&#x9;      &quot;name&quot;: &quot;ACME CORP.&quot;,&#xA;&#x9;      &quot;hire_date&quot;: &quot;01/1998&quot;&#xA;&#x9;    },&#xA;&#x9;    &quot;monthly_net_income&quot;: 4000,&#xA;&#x9;    &quot;savings_checkings&quot;: &quot;both&quot;&#xA;&#x9;  }&#xA;&#x9;},&#xA;&#x9;&quot;loan_status&quot;: &quot;pre-approved&quot;,&#xA;&#x9;&quot;loan_application_id&quot;: &quot;1234&quot;&#xA;}" doc:name="Set Payload"/>
     </flow>
     <flow name="post:/application:application/json:apiConfig">
-        <dw:transform-message doc:name="Transform Message">
-            <dw:set-payload><![CDATA[%dw 1.0
-%output application/java
----
-{
-}]]></dw:set-payload>
-        </dw:transform-message>
-        <http:request config-ref="api-sys-application-http-config" path="/application" method="POST" target="#[flowVars.applicationResponse]" doc:name="Store Applicant Information"/>
-        <dw:transform-message doc:name="Transform Message">
-            <dw:set-variable variableName="creditEvalRequest"><![CDATA[%dw 1.0
-%output application/json
----
-{
-	address1: payload.loan_app.addresses.address1,
-	address2: payload.loan_app.addresses.address2,
-	city: payload.loan_app.addresses.city,
-	firstName: payload.loan_app.first_name,
-	individualTaxIdNumber: payload.loan_app.ssn,
-	lastName: payload.loan_app.last_name,
-	middleInitial: payload.loan_app.middle_initial,
-	monthlyNetIncome: payload.loan_app.financial_information.monthly_net_income,
-	state: payload.loan_app.addresses.state,
-	zipCode: payload.loan_app.addresses.zip
-}]]></dw:set-variable>
-        </dw:transform-message>
-        <http:request config-ref="api-proc-credit-decision-http-config" path="/decision" method="POST" target="#[flowVars.creditEvalResponse]" doc:name="Evaluate Applicants Credit Worthiness" source="#[flowVars.creditEvalRequest]"/>
-<!--         <flow-ref name="api-proc-process-application-eval-application" doc:name="api-proc-process-application-eval-application"/> -->
+        <flow-ref name="api-proc-process-application-eval-application" doc:name="api-proc-process-application-eval-application"/>
     </flow>
     <apikit:mapping-exception-strategy name="apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">

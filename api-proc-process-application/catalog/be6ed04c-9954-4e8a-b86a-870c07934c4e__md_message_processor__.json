@@ -1,0 +1,17 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "api-sys-application-http-config",
+            "typeId": "POST:/application_request"
+        },
+        "flowVariables": {
+            "creditEvalResponse": {
+                "connectorName": "api-proc-credit-decision-http-config",
+                "typeId": "POST:/decision_response"
+            }
+        }
+    },
+    "outputMessageMetadata": {},
+    "id": "be6ed04c-9954-4e8a-b86a-870c07934c4e",
+    "version": "5.2.0.0"
+}

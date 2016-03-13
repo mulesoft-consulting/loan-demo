@@ -1,20 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:spring="http://www.springframework.org/schema/beans" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
-    <http:request-config name="api-proc-credit-decision-http-config" host="www.mythicalfinance.com" port="80"  doc:name="HTTP Request Configuration" basePath="/api/proc/credit-decision">
-        <http:raml-api-configuration location="api-proc-credit-decision.raml"/>
+    <http:request-config name="api-proc-credit-decision-http-config" host="${api-proc-credit-decision.host}" port="${api-proc-credit-decision.port}"  doc:name="HTTP Request Configuration" basePath="/api">
+        <http:raml-api-configuration location="api-proc-credit-decision/api-proc-credit-decision.raml"/>
     </http:request-config>
-    <http:request-config name="api-sys-application-http-config" host="www.mythicalfinance.com" port="80"  doc:name="HTTP Request Configuration" basePath="/api/sys/application">
+    <http:request-config name="api-sys-application-http-config" host="${api-sys-application.host}" port="${api-sys-application.port}"  doc:name="HTTP Request Configuration" basePath="/api">
         <http:raml-api-configuration location="api-sys-application/api-sys-application.raml"/>
     </http:request-config>
     <flow name="api-proc-process-application-eval-application">
-        <http:request config-ref="api-proc-credit-decision-http-config" path="/decision" method="POST" target="#[flowVars.creditEvalResponse]" doc:name="Evaluate Applicants Credit Worthiness"/>
-        <http:request config-ref="api-sys-application-http-config" path="/application" method="POST" doc:name="Store Applicant Information" target="#[flowVars.applicationResponse]"/>
+        <dw:transform-message doc:name="Create Credit Decision Request">
+            <dw:set-variable variableName="creditEvalRequest"><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	address1: payload.loan_app.addresses[0].address1,
+	address2: payload.loan_app.addresses[0].address2,
+	city: payload.loan_app.addresses[0].city,
+	firstName: payload.loan_app.first_name,
+	individualTaxIdNumber: payload.loan_app.ssn,
+	lastName: payload.loan_app.last_name,
+	middleInitial: payload.loan_app.middle_initial,
+	monthlyNetIncome: payload.loan_app.financial_information.monthly_net_income,
+	state: payload.loan_app.addresses[0].state,
+	zipCode: payload.loan_app.addresses[0].zip as :string
+}]]></dw:set-variable>
+        </dw:transform-message>
+        <http:request config-ref="api-proc-credit-decision-http-config" path="/decision" method="POST" source="#[flowVars.creditEvalRequest]" target="#[flowVars.creditEvalResponse]" doc:name="Evaluate Applicants Credit Worthiness">
+            <http:request-builder>
+                <http:query-param paramName="scoreType" value="soft"/>
+            </http:request-builder>
+        </http:request>
+        <dw:transform-message doc:name="Create Application Creation Request">
+            <dw:input-payload mimeType="application/json" />
+            <dw:input-variable variableName="creditEvalResponse" mimeType="application/json" />
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	loan_app: payload.loan_app ++ 
+	(loan_status: flowVars.creditEvalResponse.authorization)
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <http:request config-ref="api-sys-application-http-config" path="/application" method="POST"  doc:name="Store Applicant Information"/>
     </flow>
 </mule>

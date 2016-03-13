@@ -25,7 +25,7 @@
         <!-- Reduce DM verbosity -->
         <AsyncLogger name="org.jetel" level="WARN"/>
         <AsyncLogger name="Tracking" level="WARN"/>
-        
+        <AsyncLogger name="org.mule.module.http.internal.HttpMessageLogger" level="DEBUG"/>
         <AsyncRoot level="INFO">
             <AppenderRef ref="file" />
         </AsyncRoot>

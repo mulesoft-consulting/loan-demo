@@ -18,62 +18,72 @@
           <properties>
             <org.mule.common.metadata.property.TextBasedExampleMetaDataModelProperty>
               <exampleContent>{
-  &quot;loan_app&quot;: {
-	  &quot;loan_amount&quot;: 5000,
-	  &quot;loan_purpose&quot;: &quot;Bill Consolidation&quot;,
-	  &quot;offerNumber&quot;: &quot;1245&quot;,
-	  &quot;first_name&quot;: &quot;Mike&quot;,
-	  &quot;middle_initial&quot;: &quot;S&quot;,
-	  &quot;last_name&quot;: &quot;Smith&quot;,
-	  &quot;birth_date&quot;: &quot;04/20/1970&quot;,
-	  &quot;ssn&quot;: &quot;123-44-5555&quot;,
-	  &quot;addresses&quot;: [
-	    {
-	      &quot;isMailingOnly&quot;: false,
-	      &quot;address1&quot;: &quot;123 Main Street&quot;,
-	      &quot;address2&quot;: &quot;&quot;,
-	      &quot;city&quot;: &quot;Chicago&quot;,
-	      &quot;state&quot;: &quot;IL&quot;,
-	      &quot;zip&quot;: 12345,
-	      &quot;moveIn_date&quot;: &quot;05/2002&quot;
-	    },
-	    {
-	      &quot;isMailingOnly&quot;: true,
-	      &quot;address1&quot;: &quot;PO Box 1234&quot;,
-	      &quot;address2&quot;: &quot;&quot;,
-	      &quot;city&quot;: &quot;Chicago&quot;,
-	      &quot;state&quot;: &quot;IL&quot;,
-	      &quot;zip&quot;: 12345
-	    }
-	  ],
-	  &quot;email_address&quot;: &quot;amir.kader@mulesoft.com&quot;,
-	  &quot;contact_numbers&quot;: [
-	    {
-	      &quot;isPrimary&quot;: true,
-	      &quot;phone_number&quot;: &quot;312-111-2233&quot;,
-	      &quot;type&quot;: &quot;mobile&quot;
-	    },
-	    {
-	      &quot;isPrimary&quot;: false,
-	      &quot;phone_number&quot;: &quot;312-222-2233&quot;,
-	      &quot;type&quot;: &quot;home&quot;
-	    }
-	  ],
-	  &quot;financial_information&quot;: {
-	    &quot;retired&quot;: false,
-	    &quot;self_employed&quot;: false,
-	    &quot;employer&quot;: {
-	      &quot;name&quot;: &quot;ACME CORP.&quot;,
-	      &quot;hire_date&quot;: &quot;01/1998&quot;
-	    },
-	    &quot;monthly_net_income&quot;: 4000,
-	    &quot;savings_checkings&quot;: &quot;both&quot;
-	  }
-	}
+   &quot;loan_app&quot;:{
+      &quot;loan_amount&quot;:5000,
+      &quot;loan_purpose&quot;:&quot;Bill Consolidation&quot;,
+      &quot;offerNumber&quot;:&quot;1245&quot;,
+      &quot;first_name&quot;:&quot;Mike&quot;,
+      &quot;middle_initial&quot;:&quot;S&quot;,
+      &quot;last_name&quot;:&quot;Smith&quot;,
+      &quot;birth_date&quot;:&quot;04/20/1970&quot;,
+      &quot;ssn&quot;:&quot;123-44-5555&quot;,
+      &quot;addresses&quot;:[
+         {
+            &quot;isMailingOnly&quot;:false,
+            &quot;address1&quot;:&quot;123 Main Street&quot;,
+            &quot;address2&quot;:&quot;&quot;,
+            &quot;city&quot;:&quot;Chicago&quot;,
+            &quot;state&quot;:&quot;IL&quot;,
+            &quot;zip&quot;:12345,
+            &quot;moveIn_date&quot;:&quot;01/05/2002&quot;
+         },
+         {
+            &quot;isMailingOnly&quot;:true,
+            &quot;address1&quot;:&quot;PO Box 1234&quot;,
+            &quot;address2&quot;:&quot;&quot;,
+            &quot;city&quot;:&quot;Chicago&quot;,
+            &quot;state&quot;:&quot;IL&quot;,
+            &quot;zip&quot;:12345
+         }
+      ],
+      &quot;email_address&quot;:&quot;amir.kader@mulesoft.com&quot;,
+      &quot;contact_numbers&quot;:[
+         {
+            &quot;isPrimary&quot;:true,
+            &quot;phone_number&quot;:&quot;312-111-2233&quot;,
+            &quot;type&quot;:&quot;mobile&quot;
+         },
+         {
+            &quot;isPrimary&quot;:false,
+            &quot;phone_number&quot;:&quot;312-222-2233&quot;,
+            &quot;type&quot;:&quot;home&quot;
+         }
+      ],
+      &quot;financial_information&quot;:{
+         &quot;retired&quot;:false,
+         &quot;self_employed&quot;:false,
+         &quot;employer&quot;:{
+            &quot;name&quot;:&quot;ACME CORP.&quot;,
+            &quot;hire_date&quot;:&quot;01/01/1998&quot;
+         },
+         &quot;monthly_net_income&quot;:4000,
+         &quot;savings_checkings&quot;:&quot;both&quot;
+      },
+      &quot;loan_status&quot;:&quot;pre-approved&quot;
+   }
 }</exampleContent>
             </org.mule.common.metadata.property.TextBasedExampleMetaDataModelProperty>
             <org.mule.common.metadata.property.StructureIdentifierMetaDataModelProperty>
-              <metaDataKey class="org.mule.common.metadata.DefaultMetaDataKey" reference="../../../../../org.mule.common.metadata.DefaultMetaDataKey"/>
+              <metaDataKey class="org.mule.common.metadata.DefaultMetaDataKey">
+                <id>POST:/application_request</id>
+                <displayName>POST:/application_request</displayName>
+                <category>DEFAULT</category>
+                <metaDataKeyPropertiesManager>
+                  <properties>
+                    <org.mule.common.metadata.key.property.dsql.DsqlFromMetaDataKeyProperty/>
+                  </properties>
+                </metaDataKeyPropertiesManager>
+              </metaDataKey>
               <derivedStructure>false</derivedStructure>
               <generatedStructure>false</generatedStructure>
             </org.mule.common.metadata.property.StructureIdentifierMetaDataModelProperty>
@@ -792,6 +802,34 @@
                   </metaDataFieldPropertyManager>
                 </org.mule.common.metadata.DefaultMetaDataField>
                 <org.mule.common.metadata.DefaultMetaDataField>
+                  <name>loan_status</name>
+                  <model class="org.mule.common.metadata.DefaultSimpleMetaDataModel">
+                    <dataType>STRING</dataType>
+                    <metaDataModelPropertiesManager>
+                      <properties/>
+                    </metaDataModelPropertiesManager>
+                  </model>
+                  <accessType>READ_WRITE</accessType>
+                  <metaDataFieldPropertyManager>
+                    <properties>
+                      <org.mule.common.metadata.field.property.dsql.DsqlSelectMetaDataFieldProperty/>
+                      <org.mule.common.metadata.field.property.dsql.DsqlWhereMetaDataFieldProperty/>
+                      <org.mule.common.metadata.field.property.dsql.DsqlOrderMetaDataFieldProperty/>
+                      <org.mule.common.metadata.field.property.dsql.DsqlQueryOperatorsMetaDataFieldProperty>
+                        <supportedOperators>
+                          <org.mule.common.query.expression.LessOperator/>
+                          <org.mule.common.query.expression.LessOrEqualsOperator/>
+                          <org.mule.common.query.expression.EqualsOperator/>
+                          <org.mule.common.query.expression.GreaterOperator/>
+                          <org.mule.common.query.expression.GreaterOrEqualsOperator/>
+                          <org.mule.common.query.expression.NotEqualsOperator/>
+                          <org.mule.common.query.expression.LikeOperator/>
+                        </supportedOperators>
+                      </org.mule.common.metadata.field.property.dsql.DsqlQueryOperatorsMetaDataFieldProperty>
+                    </properties>
+                  </metaDataFieldPropertyManager>
+                </org.mule.common.metadata.DefaultMetaDataField>
+                <org.mule.common.metadata.DefaultMetaDataField>
                   <name>middle_initial</name>
                   <model class="org.mule.common.metadata.DefaultSimpleMetaDataModel">
                     <dataType>STRING</dataType>
@@ -955,7 +993,7 @@
 	    &quot;self_employed&quot;: false,
 	    &quot;employer&quot;: {
 	      &quot;name&quot;: &quot;ACME CORP.&quot;,
-	      &quot;hire_date&quot;: &quot;01/1998&quot;
+	      &quot;hire_date&quot;: &quot;01/01/1998&quot;
 	    },
 	    &quot;monthly_net_income&quot;: 4000,
 	    &quot;savings_checkings&quot;: &quot;both&quot;
@@ -966,7 +1004,16 @@
 }</exampleContent>
             </org.mule.common.metadata.property.TextBasedExampleMetaDataModelProperty>
             <org.mule.common.metadata.property.StructureIdentifierMetaDataModelProperty>
-              <metaDataKey class="org.mule.common.metadata.DefaultMetaDataKey" reference="../../../../../org.mule.common.metadata.DefaultMetaDataKey"/>
+              <metaDataKey class="org.mule.common.metadata.DefaultMetaDataKey">
+                <id>POST:/application_response</id>
+                <displayName>POST:/application_response</displayName>
+                <category>DEFAULT</category>
+                <metaDataKeyPropertiesManager>
+                  <properties>
+                    <org.mule.common.metadata.key.property.dsql.DsqlFromMetaDataKeyProperty/>
+                  </properties>
+                </metaDataKeyPropertiesManager>
+              </metaDataKey>
               <derivedStructure>false</derivedStructure>
               <generatedStructure>false</generatedStructure>
             </org.mule.common.metadata.property.StructureIdentifierMetaDataModelProperty>
