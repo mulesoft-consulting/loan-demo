@@ -144,7 +144,7 @@
 				"id" : "http://jsonschema.net/loan_app_root#loan_status",
 				"enum" : [ "pre-approved",
 						"in-progress", "underwriting",
-						"approved" ]
+						"approved", "denied" ]
 			},
 			"loan_application_id" : {
 				"id" : "http://jsonschema.net/loan_app_root#loan_application_id",
