@@ -209,7 +209,7 @@ payload[0].generated_key
 			monthly_net_income: flowVars.financial_information.monthly_net_income,
 			savings_checkings: flowVars.financial_information.savings_checkings
 		},
-		loan_status: 'pre-approved',
+		loan_status: flowVars.originalRequest.loan_status,
 		loan_application_id: flowVars.loan_id
 	}
 }]]></dw:set-payload>
