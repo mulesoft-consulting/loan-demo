@@ -9,7 +9,7 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
     <context:property-placeholder location="api.properties" />
     <apikit:config name="apiConfig" raml="api-proc-process-application.raml" consoleEnabled="true" consolePath="console" doc:name="Router" />
     <flow name="main" >
-        <http:listener config-ref="http-lc-0.0.0.0-8081" doc:name="HTTP" path="/api/proc/process-app/*" />
+        <http:listener config-ref="http-lc-0.0.0.0-8081" doc:name="HTTP" path="/api/*" />
         <apikit:router config-ref="apiConfig" doc:name="APIkit Router" />
         <exception-strategy ref="apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy" />
     </flow>
