@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:context="http://www.springframework.org/schema/context" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd">
+    <http:request-config name="api-sys-credit-score-http-config" host="${api-sys-credit-score.host}" port="${api-sys-credit-score.port}" basePath="/api" doc:name="HTTP Request Configuration">
+        <http:raml-api-configuration location="api-sys-credit-score/api-sys-credit-score.raml"/>
+    </http:request-config>
+    <context:property-placeholder location="api.properties"/>
+    <flow name="api-proc-credit-decision-impl-flow">
+        <set-variable variableName="scoreType" value="#[message.inboundProperties.'http.query.params'.scoreType]" doc:name="Score Type"/>
+        <http:request config-ref="api-sys-credit-score-http-config" path="/scores" method="POST" doc:name="Get Bureau Scores ">
+            <http:request-builder>
+                <http:query-param paramName="scoreType" value="soft"/>
+            </http:request-builder>
+        </http:request>
+        <dw:transform-message metadata:id="bca272d1-71d9-4b9d-a1d0-be60aacf8559" doc:name="Create Response">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	address1: payload.address1,
+	address2: payload.address2,
+	bureauScores: payload.bureauScores map ((bureauScore , indexOfBureauScore) -> bureauScore),
+	city: payload.city,
+	combinedFicoScore: payload.combinedFicoScore,
+	firstName: payload.firstName,
+	individualTaxIdNumber: payload.individualTaxIdNumber,
+	lastName: payload.lastName,
+	middleInitial: payload.middleInitial,
+	monthlyNetIncome: payload.monthlyNetIncome,
+	state: payload.state,
+	zipCode: payload.zipCode,
+	authorization:  "pre-approved" when flowVars.scoreType == "soft" and payload.combinedFicoScore >= 680 
+		otherwise "approved" when flowVars.scoreType == "hard" and payload.combinedFicoScore >= 680 
+		otherwise "denied"
+}]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
+</mule>
