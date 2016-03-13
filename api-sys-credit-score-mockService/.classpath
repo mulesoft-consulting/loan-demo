@@ -17,5 +17,6 @@
 	<classpathentry kind="lib" path="src/main/app/lib/com.ibm.mqetclient.jar"/>
 	<classpathentry kind="lib" path="src/main/app/lib/com.ibm.mqjms.jar"/>
 	<classpathentry kind="lib" path="src/main/app/lib/dhbcore.jar"/>
+	<classpathentry kind="con" path="MULE_LIB/Anypoint MQ/org.mule.tooling.incubator.messaging.contribution"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
