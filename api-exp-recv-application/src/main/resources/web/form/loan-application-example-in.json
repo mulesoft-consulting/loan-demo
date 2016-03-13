@@ -16,7 +16,7 @@
 	      "city": "Chicago",
 	      "state": "IL",
 	      "zip": 12345,
-	      "moveIn_date": "05/2002"
+	      "moveIn_date": "10/05/2002"
 	    },
 	    {
 	      "isMailingOnly": true,
@@ -45,7 +45,7 @@
 	    "self_employed": false,
 	    "employer": {
 	      "name": "ACME CORP.",
-	      "hire_date": "01/1998"
+	      "hire_date": "01/01/1998"
 	    },
 	    "monthly_net_income": 4000,
 	    "savings_checkings": "both"
