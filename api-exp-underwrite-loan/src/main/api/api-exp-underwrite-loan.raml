@@ -4,7 +4,7 @@ title: Underwrite Loan Experience API
 baseUri: http://www.mythicalfinance.com/api/exp/underwrite
 version: 1.0
 
-/applications:
+/application:
   get:
     responses: 
       200: 
@@ -13,7 +13,7 @@ version: 1.0
             schema: !include api-exp-underwrite-loan-apps-schema.json
             example: !include api-exp-underwrite-loan-apps-example.json
 
-/decison:
+/decision:
   /{loan_application_id}:
     uriParameters: 
       loan_application_id:
