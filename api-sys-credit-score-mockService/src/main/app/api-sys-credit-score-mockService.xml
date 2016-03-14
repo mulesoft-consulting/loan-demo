@@ -35,7 +35,7 @@ str.each {letter -> sum+=(int)letter}
 sum %= 900
 
 if(sum < 500) {
-	return 500 + (sum%100)
+	return (500+sum < 900)?500+sum:400+sum
 }
 
 return sum]]></scripting:script>
@@ -84,7 +84,7 @@ str.each {letter -> sum+=(int)letter}
 sum %= 900
 
 if(sum < 500) {
-	return 500 + (sum % 100)
+	return (500+sum < 900)?500+sum:400+sum
 }
 
 return sum]]></scripting:script>
@@ -131,7 +131,7 @@ str.each {letter -> sum+=(int)letter}
 def total = sum % 900
 
 if(total < 500) {
-	total = 500 + (total % 100)
+	total = (500+total < 900)?500+total:400+total
 }
 
 def msg = flowVars['originalRequest']
