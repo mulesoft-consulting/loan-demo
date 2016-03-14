@@ -25,7 +25,7 @@
     },
     "noteNumber": {
       "id": "http://jsonschema.net/noteNumber",
-      "type": "string"
+      "type": "integer"
     },
     "category": {
       "id": "http://jsonschema.net/category",
@@ -37,15 +37,15 @@
     },
     "requestedAmount": {
       "id": "http://jsonschema.net/requestedAmount",
-      "type": "string"
+      "type": "number"
     },
     "noteAmount": {
       "id": "http://jsonschema.net/noteAmount",
-      "type": "string"
+      "type": "number"
     },
     "creditLimit": {
       "id": "http://jsonschema.net/creditLimit",
-      "type": "string"
+      "type": "number"
     },
     "creditLimitExpiration": {
       "id": "http://jsonschema.net/creditLimitExpiration",
@@ -61,15 +61,15 @@
     },
     "isRevolvingLineOfCredit": {
       "id": "http://jsonschema.net/isRevolvingLineOfCredit",
-      "type": "string"
+      "type": "boolean"
     },
     "minimumAdvanceAmount": {
       "id": "http://jsonschema.net/minimumAdvanceAmount",
-      "type": "string"
+      "type": "number"
     },
     "maximumAdvanceAmount": {
       "id": "http://jsonschema.net/maximumAdvanceAmount",
-      "type": "string"
+      "type": "number"
     },
     "originationDate": {
       "id": "http://jsonschema.net/originationDate",
@@ -89,11 +89,11 @@
     },
     "combinedCreditScore": {
       "id": "http://jsonschema.net/combinedCreditScore",
-      "type": "string"
+      "type": "integer"
     },
     "loanInterestRateDetail": {
       "id": "http://jsonschema.net/loanInterestRateDetail",
-      "type": "string"
+      "type": "number"
     },
     "paymentOption": {
       "id": "http://jsonschema.net/paymentOption",
@@ -101,19 +101,19 @@
     },
     "dailyPeriodicRate": {
       "id": "http://jsonschema.net/dailyPeriodicRate",
-      "type": "string"
+      "type": "integer"
     },
     "totalNumberOfPayments": {
       "id": "http://jsonschema.net/totalNumberOfPayments",
-      "type": "string"
+      "type": "integer"
     },
     "prePaidFinanceCharges": {
       "id": "http://jsonschema.net/prePaidFinanceCharges",
-      "type": "string"
+      "type": "number"
     },
     "prepaidInterest": {
       "id": "http://jsonschema.net/prepaidInterest",
-      "type": "string"
+      "type": "number"
     },
     "interestPaidThruDate": {
       "id": "http://jsonschema.net/interestPaidThruDate",
@@ -121,11 +121,11 @@
     },
     "numberOfGraceDays": {
       "id": "http://jsonschema.net/numberOfGraceDays",
-      "type": "string"
+      "type": "integer"
     },
     "balloonAmount": {
       "id": "http://jsonschema.net/balloonAmount",
-      "type": "string"
+      "type": "number"
     },
     "balloonDueDate": {
       "id": "http://jsonschema.net/balloonDueDate",
@@ -137,11 +137,11 @@
     },
     "prepaymentPenaltyBasisAmount": {
       "id": "http://jsonschema.net/prepaymentPenaltyBasisAmount",
-      "type": "string"
+      "type": "number"
     },
     "prepaymentPenaltyPercentage": {
       "id": "http://jsonschema.net/prepaymentPenaltyPercentage",
-      "type": "string"
+      "type": "number"
     },
     "prepaymentPenaltyExpirationDate": {
       "id": "http://jsonschema.net/prepaymentPenaltyExpirationDate",
@@ -161,7 +161,7 @@
     },
     "debtIncomeRatio": {
       "id": "http://jsonschema.net/debtIncomeRatio",
-      "type": "string"
+      "type": "number"
     }
   },
   "required": [
