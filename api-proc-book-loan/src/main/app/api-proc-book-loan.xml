@@ -5,12 +5,12 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
     <apikit:config xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" name="api-proc-book-loan-config" raml="api-proc-book-loan.raml" consoleEnabled="true" consolePath="console" doc:name="Router"/>
-    <http:request-config name="http_api_sys_account" host="www.mythicalfinance.com" port="80" basePath="/api/sys/account" doc:name="HTTP Request Configuration">
+    <http:request-config name="http_api_sys_account" host="sfs-api-sys-account.cloudhub.io" port="80" basePath="/api" doc:name="HTTP Request Configuration">
         <http:raml-api-configuration location="api-sys-account/api-sys-account.raml"/>
     </http:request-config>
     <flow name="api-proc-book-loan-main">
-        <http:listener xmlns:http="http://www.mulesoft.org/schema/mule/http" config-ref="http-lc-0.0.0.0-8081" path="/api/*" doc:name="HTTP"/>
-        <apikit:router xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" config-ref="api-proc-book-loan-config" doc:name="APIkit Router"/>
+         <http:listener config-ref="http-lc-0.0.0.0-8081" path="/api/*" doc:name="HTTP" />
+        <apikit:router config-ref="api-proc-book-loan-config" doc:name="APIkit Router"/>
         <exception-strategy ref="api-proc-book-loan-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
     </flow>
     <flow name="post:/account:application/json:api-proc-book-loan-config">
