@@ -1,0 +1,209 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://jsonschema.net",
+  "type": "object",
+  "properties": {
+    "loanDecisionDate": {
+      "id": "http://jsonschema.net/loanDecisionDate",
+      "type": "string"
+    },
+    "applicationOriginationDate": {
+      "id": "http://jsonschema.net/applicationOriginationDate",
+      "type": "string"
+    },
+    "applicationDecisionStatus": {
+      "id": "http://jsonschema.net/applicationDecisionStatus",
+      "type": "string"
+    },
+    "loanAccountStatus": {
+      "id": "http://jsonschema.net/loanAccountStatus",
+      "type": "string"
+    },
+    "loanAccountSubStatus": {
+      "id": "http://jsonschema.net/loanAccountSubStatus",
+      "type": "string"
+    },
+    "noteNumber": {
+      "id": "http://jsonschema.net/noteNumber",
+      "type": "integer"
+    },
+    "category": {
+      "id": "http://jsonschema.net/category",
+      "type": "string"
+    },
+    "purposeCode": {
+      "id": "http://jsonschema.net/purposeCode",
+      "type": "string"
+    },
+    "requestedAmount": {
+      "id": "http://jsonschema.net/requestedAmount",
+      "type": "number"
+    },
+    "noteAmount": {
+      "id": "http://jsonschema.net/noteAmount",
+      "type": "number"
+    },
+    "creditLimit": {
+      "id": "http://jsonschema.net/creditLimit",
+      "type": "number"
+    },
+    "creditLimitExpiration": {
+      "id": "http://jsonschema.net/creditLimitExpiration",
+      "type": "string"
+    },
+    "creditLimitGroupCode": {
+      "id": "http://jsonschema.net/creditLimitGroupCode",
+      "type": "string"
+    },
+    "creditReportingCode": {
+      "id": "http://jsonschema.net/creditReportingCode",
+      "type": "string"
+    },
+    "isRevolvingLineOfCredit": {
+      "id": "http://jsonschema.net/isRevolvingLineOfCredit",
+      "type": "boolean"
+    },
+    "minimumAdvanceAmount": {
+      "id": "http://jsonschema.net/minimumAdvanceAmount",
+      "type": "number"
+    },
+    "maximumAdvanceAmount": {
+      "id": "http://jsonschema.net/maximumAdvanceAmount",
+      "type": "number"
+    },
+    "originationDate": {
+      "id": "http://jsonschema.net/originationDate",
+      "type": "string"
+    },
+    "disbursalDate": {
+      "id": "http://jsonschema.net/disbursalDate",
+      "type": "string"
+    },
+    "creationDate": {
+      "id": "http://jsonschema.net/creationDate",
+      "type": "string"
+    },
+    "term": {
+      "id": "http://jsonschema.net/term",
+      "type": "string"
+    },
+    "combinedCreditScore": {
+      "id": "http://jsonschema.net/combinedCreditScore",
+      "type": "integer"
+    },
+    "loanInterestRateDetail": {
+      "id": "http://jsonschema.net/loanInterestRateDetail",
+      "type": "number"
+    },
+    "paymentOption": {
+      "id": "http://jsonschema.net/paymentOption",
+      "type": "string"
+    },
+    "dailyPeriodicRate": {
+      "id": "http://jsonschema.net/dailyPeriodicRate",
+      "type": "integer"
+    },
+    "totalNumberOfPayments": {
+      "id": "http://jsonschema.net/totalNumberOfPayments",
+      "type": "integer"
+    },
+    "prePaidFinanceCharges": {
+      "id": "http://jsonschema.net/prePaidFinanceCharges",
+      "type": "number"
+    },
+    "prepaidInterest": {
+      "id": "http://jsonschema.net/prepaidInterest",
+      "type": "number"
+    },
+    "interestPaidThruDate": {
+      "id": "http://jsonschema.net/interestPaidThruDate",
+      "type": "string"
+    },
+    "numberOfGraceDays": {
+      "id": "http://jsonschema.net/numberOfGraceDays",
+      "type": "integer"
+    },
+    "balloonAmount": {
+      "id": "http://jsonschema.net/balloonAmount",
+      "type": "number"
+    },
+    "balloonDueDate": {
+      "id": "http://jsonschema.net/balloonDueDate",
+      "type": "string"
+    },
+    "balloonDueDateTermValue": {
+      "id": "http://jsonschema.net/balloonDueDateTermValue",
+      "type": "string"
+    },
+    "prepaymentPenaltyBasisAmount": {
+      "id": "http://jsonschema.net/prepaymentPenaltyBasisAmount",
+      "type": "number"
+    },
+    "prepaymentPenaltyPercentage": {
+      "id": "http://jsonschema.net/prepaymentPenaltyPercentage",
+      "type": "number"
+    },
+    "prepaymentPenaltyExpirationDate": {
+      "id": "http://jsonschema.net/prepaymentPenaltyExpirationDate",
+      "type": "string"
+    },
+    "statementCode": {
+      "id": "http://jsonschema.net/statementCode",
+      "type": "string"
+    },
+    "statementGroup": {
+      "id": "http://jsonschema.net/statementGroup",
+      "type": "string"
+    },
+    "statementDate": {
+      "id": "http://jsonschema.net/statementDate",
+      "type": "string"
+    },
+    "debtIncomeRatio": {
+      "id": "http://jsonschema.net/debtIncomeRatio",
+      "type": "number"
+    }
+  },
+  "required": [
+    "loanDecisionDate",
+    "applicationOriginationDate",
+    "applicationDecisionStatus",
+    "loanAccountStatus",
+    "loanAccountSubStatus",
+    "noteNumber",
+    "category",
+    "purposeCode",
+    "requestedAmount",
+    "noteAmount",
+    "creditLimit",
+    "creditLimitExpiration",
+    "creditLimitGroupCode",
+    "creditReportingCode",
+    "isRevolvingLineOfCredit",
+    "minimumAdvanceAmount",
+    "maximumAdvanceAmount",
+    "originationDate",
+    "disbursalDate",
+    "creationDate",
+    "term",
+    "combinedCreditScore",
+    "loanInterestRateDetail",
+    "paymentOption",
+    "dailyPeriodicRate",
+    "totalNumberOfPayments",
+    "prePaidFinanceCharges",
+    "prepaidInterest",
+    "interestPaidThruDate",
+    "numberOfGraceDays",
+    "balloonAmount",
+    "balloonDueDate",
+    "balloonDueDateTermValue",
+    "prepaymentPenaltyBasisAmount",
+    "prepaymentPenaltyPercentage",
+    "prepaymentPenaltyExpirationDate",
+    "statementCode",
+    "statementGroup",
+    "statementDate",
+    "debtIncomeRatio"
+  ]
+}
