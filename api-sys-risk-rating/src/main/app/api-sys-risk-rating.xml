@@ -19,7 +19,7 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
 {
 	address1: payload.address1,
 	address2: payload.address2,
-	authorization: "authorized" when ranom == 0 otherwise "rejected",
+	authorization: "authorized" when flowVars.random == 0 otherwise "rejected",
 	bureauScores: payload.bureauScores map ((bureauScore , indexOfBureauScore) -> bureauScore),
 	city: payload.city,
 	combinedFicoScore: payload.combinedFicoScore,
@@ -32,6 +32,7 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
 	zipCode: payload.zipCode
 }]]></dw:set-payload>
         </dw:transform-message>
+        <logger message="#[payload:java.lang.String]" level="INFO" doc:name="Logger"/>
     </flow>
     <apikit:mapping-exception-strategy name="api-sys-risk-rating-apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
