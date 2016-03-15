@@ -1,0 +1,39 @@
+{
+  "loan_app": {
+    "addresses": [
+      {
+        "address1":"123 Main Street",
+        "address2":"",
+        "city":"Chicago"
+        "state":"IL",
+        "zip":12345
+        
+      }
+    ],
+    "birth_date": "01/01/1900",
+    "contact_numbers": [
+      {
+        
+      }
+    ],
+    "email_address": "ricardo@ruben.com",
+    "financial_information": {
+      "employer": {
+        
+      },
+      "monthly_net_income": 10000,
+      "retired": true,
+      "savings_checkings": "xxxx",
+      "self_employed": true
+    },
+    "first_name": "Ricardo",
+    "last_name": "Ruben",
+    "loan_amount": 100000,
+    "loan_application_id": "1234",
+    "loan_purpose": "xxxx",
+    "loan_status": "pre-approved",
+    "middle_initial": "",
+    "offerNumber": "????",
+    "ssn": "123-456-789"
+  }
+}

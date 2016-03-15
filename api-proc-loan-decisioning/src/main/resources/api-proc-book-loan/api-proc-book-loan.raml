@@ -1,0 +1,21 @@
+#%RAML 0.8
+
+title: Account System API
+baseUri: http://sfs-api-proc-book-loan.cloudhub.io/api
+version: 1.0
+schemas: 
+  - loan-account: !include api-proc-book-loan-schema.json
+
+/account:
+  post: 
+    body:   
+      application/json: 
+        schema: loan-account
+        example: !include api-proc-book-loan-example.json
+        
+    responses: 
+      200:
+        body: 
+          application/json: 
+            schema: loan-account
+            example: !include api-proc-book-loan-example.json

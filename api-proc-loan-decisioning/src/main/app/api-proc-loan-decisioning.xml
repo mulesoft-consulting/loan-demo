@@ -1,17 +1,105 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
     <apikit:config name="api-proc-loan-decisioning-config" raml="api-proc-loan-decisioning.raml" consoleEnabled="true" consolePath="console" doc:name="Router"/>
+    <http:request-config name="http_api_risk_rating" host="www.mythicalfinance.com" port="80" basePath="/api/sys/risk-rating" doc:name="HTTP Request Configuration">
+        <http:raml-api-configuration location="api-sys-risk-rating/api-sys-risk-rating.raml"/>
+    </http:request-config>
+    <http:request-config name="http_application_api" host="sfs-api-proc-process-application.cloudhub.io" port="80" basePath="/api" doc:name="HTTP Request Configuration">
+        <http:raml-api-configuration location="api-proc-process-application/api-proc-process-application.raml"/>
+    </http:request-config>
+    <http:request-config name="http_api_credit_decision" host="www.mythicalfinance.com" port="80" basePath="/api/proc/credit-decision" doc:name="HTTP Request Configuration">
+        <http:raml-api-configuration location="api-proc-credit-decision/api-proc-credit-decision.raml"/>
+    </http:request-config>
+    <http:request-config name="http_api_proc_book_loan" host="sfs-api-proc-book-loan.cloudhub.io" port="80" basePath="/api" doc:name="HTTP Request Configuration">
+        <http:raml-api-configuration location="api-proc-book-loan/api-proc-book-loan.raml"/>
+    </http:request-config>
     <flow name="api-proc-loan-decisioning-main">
         <http:listener config-ref="http-lc-0.0.0.0-8081" path="/api/*" doc:name="HTTP"/>
         <apikit:router config-ref="api-proc-loan-decisioning-config" doc:name="APIkit Router"/>
         <exception-strategy ref="api-proc-loan-decisioning-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
     </flow>
     <flow name="post:/decison/{loan_application_id}:api-proc-loan-decisioning-config">
-        <set-payload value="{&#xA;    &quot;loan_application_id&quot;: 0,&#xA;    &quot;first_name&quot;: &quot;&quot;,&#xA;    &quot;last_name&quot;: &quot;&quot;,&#xA;    &quot;loan_amount&quot;: 0,&#xA;    &quot;combined_credit_score&quot;: 0,&#xA;    &quot;status&quot;: &quot;approved&quot;&#xA;  }" doc:name="Set Payload"/>
+        <http:request config-ref="http_application_api" path="/application/{loanId}" method="GET" doc:name="Get Loan">
+            <http:request-builder>
+                <http:uri-param paramName="loanId" value="#[payload.loan_application_id]"/>
+            </http:request-builder>
+        </http:request>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:input-payload doc:sample="json.json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	address1: payload.loan_app.addresses[0].address1,
+	address2: payload.loan_app.addresses[0].address2,
+	city: payload.loan_app.addresses[0].city,
+	firstName: payload.loan_app.first_name,
+	individualTaxIdNumber: payload.loan_app.ssn,
+	lastName: payload.loan_app.last_name,
+	middleInitial: payload.loan_app.middle_initial,
+	monthlyNetIncome: payload.loan_app.financial_information.monthly_net_income,
+	state: payload.loan_app.addresses[0].state,
+	zipCode: payload.loan_app.address[0].zip as :string
+	
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <http:request config-ref="http_api_credit_decision" path="/decision" method="POST" doc:name="Get Credit Decission"/>
+        <choice doc:name="If Approved">
+            <when expression="#[payload.authorization =='approved']">
+                <flow-ref name="call_risk_Flow" doc:name="call_risk_Flow"/>
+            </when>
+            <otherwise>
+                <logger message="&quot;Loan not Authorized status: #[payload.authorization]&quot;" level="INFO" category="[CREDIT_DECISION]" doc:name="Logger"/>
+            </otherwise>
+        </choice>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+[{
+	combined_credit_score: payload.combinedFicoScore,
+	first_name: payload.firstName,
+	last_name: payload.lastName
+}]]]></dw:set-payload>
+        </dw:transform-message>
     </flow>
+    <sub-flow name="call_risk_Flow">
+        <http:request config-ref="http_api_risk_rating" path="/evaluate" method="POST" doc:name="Evaluate Risk"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+paylod]]></dw:set-payload>
+            <dw:set-variable variableName="evaluate_risk"><![CDATA[%dw 1.0
+%output application/java
+---
+payload]]></dw:set-variable>
+        </dw:transform-message>
+        <choice doc:name="Choice">
+            <when expression="#[payload.authorization == &quot;authorized&quot;]">
+                <flow-ref name="book_loan_Flow" doc:name="book_loan_Flow"/>
+            </when>
+            <otherwise>
+                <logger message="&quot;Loan not Authorized status: #[payload.authorization]&quot;" level="INFO" category="RISK_DECISION" doc:name="Logger"/>
+            </otherwise>
+        </choice>
+    </sub-flow>
+    <sub-flow name="book_loan_Flow">
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	applicationDecisionStatus: flowVars.evaluate_risk.authorization
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <http:request config-ref="http_api_proc_book_loan" path="/account" method="POST" doc:name="Create Account"/>
+    </sub-flow>
     <apikit:mapping-exception-strategy name="api-proc-loan-decisioning-apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
