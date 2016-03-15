@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
     <apikit:config name="api-sys-risk-rating-config" raml="api-sys-risk-rating.raml" consoleEnabled="true" consolePath="console" doc:name="Router"/>
     <flow name="api-sys-risk-rating-main">
         <http:listener config-ref="http-lc-0.0.0.0-8081" path="/api/*" doc:name="HTTP"/>
@@ -10,7 +11,27 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
         <exception-strategy ref="api-sys-risk-rating-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
     </flow>
     <flow name="post:/evaluate:application/json:api-sys-risk-rating-config">
-        <set-payload value="{&#xA;  &quot;authorization&quot;: &quot;pre-approved&quot;,&#xA;  &quot;firstName&quot;: &quot;James&quot;,&#xA;  &quot;middleInitial&quot;: &quot;&quot;,&#xA;  &quot;lastName&quot;: &quot;Johnson&quot;,&#xA;  &quot;individualTaxIdNumber&quot;: &quot;312-22-1234&quot;,&#xA;  &quot;address1&quot;: &quot;123 Main Street&quot;,&#xA;  &quot;address2&quot;: &quot;&quot;,&#xA;  &quot;city&quot;: &quot;Madison&quot;,&#xA;  &quot;state&quot;: &quot;WI&quot;,&#xA;  &quot;zipCode&quot;: &quot;54500&quot;,&#xA;  &quot;monthlyNetIncome&quot;: 5000,&#xA;  &quot;combinedFicoScore&quot;: 750,&#xA;  &quot;bureauScores&quot;: [&#xA;    {&#xA;      &quot;bureau&quot;: &quot;transunion&quot;,&#xA;      &quot;ficoScore&quot;: 750&#xA;    },&#xA;    {&#xA;      &quot;bureau&quot;: &quot;equixfax&quot;,&#xA;      &quot;ficoScore&quot;: 750&#xA;    },&#xA;    {&#xA;      &quot;bureau&quot;: &quot;experian&quot;,&#xA;      &quot;ficoScore&quot;: 750&#xA;    }&#xA;  ]&#xA;}" doc:name="Set Payload"/>
+        <set-variable variableName="random" value="#[new java.util.Random().nextInt(100) % 2]" doc:name="Random Number"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	address1: payload.address1,
+	address2: payload.address2,
+	authorization: "authorized" when ranom == 0 otherwise "rejected",
+	bureauScores: payload.bureauScores map ((bureauScore , indexOfBureauScore) -> bureauScore),
+	city: payload.city,
+	combinedFicoScore: payload.combinedFicoScore,
+	firstName: payload.firstName,
+	individualTaxIdNumber: payload.individualTaxIdNumber,
+	lastName: payload.lastName,
+	middleInitial: payload.middleInitial,
+	monthlyNetIncome: payload.monthlyNetIncome,
+	state: payload.state,
+	zipCode: payload.zipCode
+}]]></dw:set-payload>
+        </dw:transform-message>
     </flow>
     <apikit:mapping-exception-strategy name="api-sys-risk-rating-apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
