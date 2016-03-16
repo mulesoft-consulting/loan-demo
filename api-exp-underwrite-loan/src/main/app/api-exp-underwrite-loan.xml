@@ -8,13 +8,16 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
     <http:request-config name="HTTP_Request_Configuration" host="sfs-api-proc-loan-decisioning.cloudhub.io" port="80" basePath="/api" doc:name="HTTP Request Configuration">
         <http:raml-api-configuration location="api-proc-loan-decisioning/api-proc-loan-decisioning.raml"/>
     </http:request-config>
+    <http:request-config name="HTTP_Request_Configuration1" host="sfs-api-proc-process-application.cloudhub.io" port="80" basePath="/api" doc:name="HTTP Request Configuration">
+        <http:raml-api-configuration location="api-proc-process-application/api-proc-process-application.raml"/>
+    </http:request-config>
     <flow name="api-exp-underwrite-loan-main">
         <http:listener config-ref="http-lc-0.0.0.0-8081" path="/api/*" doc:name="HTTP"/>
         <apikit:router config-ref="api-exp-underwrite-loan-config" doc:name="APIkit Router"/>
         <exception-strategy ref="api-exp-underwrite-loan-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
     </flow>
     <flow name="get:/application:api-exp-underwrite-loan-config">
-        <set-payload value="[&#xA;  {&#xA;    &quot;loan_application_id&quot;: 1234,&#xA;    &quot;first_name&quot;: &quot;Jim&quot;,&#xA;    &quot;last_name&quot;: &quot;Doyle&quot;,&#xA;    &quot;loan_amount&quot;: 250000,&#xA;    &quot;combined_credit_score&quot;: 795,&#xA;    &quot;status&quot;: &quot;pre-approved&quot;&#xA;  }&#xA;]" doc:name="Set Payload"/>
+        <http:request config-ref="HTTP_Request_Configuration1" path="/application" method="GET" doc:name="HTTP"/>
     </flow>
     <flow name="post:/decision/{loan_application_id}:api-exp-underwrite-loan-config">
         <http:request config-ref="HTTP_Request_Configuration" path="/decison/{loan_application_id}" method="POST" doc:name="HTTP">
