@@ -50,7 +50,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
             <dw:set-variable variableName="loan_information"><![CDATA[%dw 1.0
 %output application/java
 ---
-payload]]></dw:set-variable>
+payload.loan_app]]></dw:set-variable>
         </dw:transform-message>
         <object-to-string-transformer doc:name="Object to String"/>
         <http:request config-ref="http_api_credit_decision" path="/decision" method="POST" doc:name="Get Credit Decission">
@@ -63,6 +63,14 @@ payload]]></dw:set-variable>
 %output application/java
 ---
 payload]]></dw:set-payload>
+            <dw:set-variable variableName="combinedFicoScore"><![CDATA[%dw 1.0
+%output application/java
+---
+payload.combinedFicoScore]]></dw:set-variable>
+            <dw:set-variable variableName="credit_decission"><![CDATA[%dw 1.0
+%output application/java
+---
+payload]]></dw:set-variable>
         </dw:transform-message>
         <choice doc:name="If Approved">
             <when expression="#[payload.authorization =='approved']">
@@ -78,14 +86,16 @@ payload]]></dw:set-payload>
 %output application/json
 ---
 {
-	first_name: payload.firstName,
-	last_name: payload.lastName,
-	loan_amount: payload.loan_amount,
-	combined_credit_score: payload.combinedFicoScore,
+	first_name: flowVars.credit_decission.firstName,
+	last_name: flowVars.credit_decission.lastName,
+	loan_amount: flowVars.loan_information.loan_amount,
+	loan_application_id: flowVars.loan_application_id as :number,
+	combined_credit_score: flowVars.combinedFicoScore,
 	status: flowVars.loan_status
 }
 ]]></dw:set-payload>
         </dw:transform-message>
+        <logger message="#[payload:java.lang.String]" level="INFO" doc:name="Logger"/>
     </flow>
     <sub-flow name="call_risk_Flow">
         <dw:transform-message doc:name="Transform Message">
@@ -133,18 +143,22 @@ payload]]></dw:set-payload>
 ---
 {
 	applicationDecisionStatus: payload.authorization,
-	loanAccountStatus: flowVars.loan_information.loan_app.loan_status,
-	noteAmount: flowVars.loan_information.loan_app.loan_amount,
-	purposeCode: flowVars.loan_information.loan_app.loan_purpose,
-	requestedAmount: flowVars.loan_information.loan_app.loan_amount,
+	loanAccountStatus: flowVars.loan_information.loan_status,
+	noteAmount: flowVars.loan_information.loan_amount as :number,
+	purposeCode: flowVars.loan_information.loan_purpose,
+	requestedAmount: flowVars.loan_information.loan_amount as :number,
 	loanDecisionDate: now as :string {format: "yyyy-MM-dd"},
-	noteNumber: flowVars.loan_infomration.loan_app.loan_application_id as :number,
+	noteNumber: flowVars.loan_information.loan_application_id as :number,
 	term: "15",
 	totalNumberOfPayments: 180
 }]]></dw:set-payload>
+            <dw:set-variable variableName="loan_status"><![CDATA[%dw 1.0
+%output application/java
+---
+payload.authorization]]></dw:set-variable>
         </dw:transform-message>
+        <object-to-string-transformer doc:name="Object to String"/>
         <http:request config-ref="http_api_proc_book_loan" path="/account" method="POST" doc:name="Create Account"/>
-        <set-variable variableName="loan_status" value="#[payload.authorization]" doc:name="Save Loan Status"/>
     </sub-flow>
     <apikit:mapping-exception-strategy name="api-proc-loan-decisioning-apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
