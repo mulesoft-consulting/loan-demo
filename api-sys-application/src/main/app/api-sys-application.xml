@@ -74,7 +74,7 @@ payload.loan_id joinBy ',']]></dw:set-variable>
 ---
 payload[0] map using (loan = $)
 {
-	loan_app: {
+	"loan_app": {
 		loan_amount: loan.loan_amount,
 		loan_purpose: loan.loan_purpose,
 		offerNumber: loan.offerNumber,
@@ -122,6 +122,13 @@ payload[0] map using (loan = $)
 .loans l left join spring_leaf.financial_information f on f.loan_id = l.id left join spring_leaf.employer e on e.financial_information_id = f.id where l.id = #[loanId]]]></db:parameterized-query>
 		</db:select>
         <flow-ref name="loadApplicationChildren" doc:name="loadApplicationChildren"/>
+        <dw:transform-message doc:name="Transform Message">
+        	
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload[0]]]></dw:set-payload>
+        </dw:transform-message>
 	</flow>
 	<flow name="post:/application:application/json:api-sys-application-config">
 		<dw:transform-message doc:name="Set Variables">
@@ -175,7 +182,7 @@ payload[0].generated_key
 %output application/json
 ---
 {
-	loan_app: {
+	"loan_app": {
 		loan_amount: flowVars.originalRequest.loan_amount,
 		loan_purpose: flowVars.originalRequest.loan_purpose,
 		offerNumber: flowVars.originalRequest.offerNumber,
