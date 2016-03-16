@@ -40,7 +40,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 	lastName: payload.loan_app.last_name default "",
 	individualTaxIdNumber: payload.loan_app.ssn,
 	address1: payload.loan_app.addresses[0].address1 default "",
-	address2: payload.loan_app.addresses[0].address2 default "hijo de puta ",
+	address2: payload.loan_app.addresses[0].address2 default "",
 	city: payload.loan_app.addresses[0].city default "",
 	state: payload.loan_app.addresses[0].state default "",
 	zipCode: payload.loan_app.addresses[0].zip as :string default "0000",
@@ -66,7 +66,7 @@ payload]]></dw:set-payload>
             <dw:set-variable variableName="combinedFicoScore"><![CDATA[%dw 1.0
 %output application/java
 ---
-payload.combinedFicoScore]]></dw:set-variable>
+payload.combinedFicoScore as :number {class: "int"}]]></dw:set-variable>
             <dw:set-variable variableName="credit_decission"><![CDATA[%dw 1.0
 %output application/java
 ---
@@ -95,7 +95,6 @@ payload]]></dw:set-variable>
 }
 ]]></dw:set-payload>
         </dw:transform-message>
-        <logger message="#[payload:java.lang.String]" level="INFO" doc:name="Logger"/>
     </flow>
     <sub-flow name="call_risk_Flow">
         <dw:transform-message doc:name="Transform Message">
@@ -108,7 +107,7 @@ payload]]></dw:set-variable>
 	authorization: payload.authorization,
 	bureauScores: payload.bureauScores map ((bureauScore , indexOfBureauScore) -> bureauScore),
 	city: payload.city,
-	combinedFicoScore: 698,//payload.combinedFicoScore as :string {format: "##"} as :number,
+	combinedFicoScore: flowVars.combinedFicoScore,
 	firstName: payload.firstName,
 	individualTaxIdNumber: payload.individualTaxIdNumber,
 	lastName: payload.lastName,
