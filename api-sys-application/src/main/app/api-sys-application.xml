@@ -237,6 +237,7 @@ values(#[flowVars.financial_information.employer.name],#[flowVars.financial_info
     </flow>
     <flow name="patch:/application/{loanId}:application/json:api-sys-application-config">
         <set-variable variableName="path" value="#[json:path]" doc:name="Set Path"/>
+        <set-variable variableName="value" value="#[json:value]" doc:name="Set Value"/>
         <choice doc:name="Choice">
             <when expression="#[flowVars.path == '/status']">
                 <flow-ref name="update_loan_statusSub_Flow" doc:name="update_loan_statusSub_Flow"/>
@@ -250,7 +251,7 @@ values(#[flowVars.financial_information.employer.name],#[flowVars.financial_info
     </flow>
     <sub-flow name="update_loan_statusSub_Flow">
         <db:update config-ref="MySQL_Configuration" doc:name="Update Loan Status">
-            <db:parameterized-query><![CDATA[update spring_leaf.loans set loan_status=#[payload.value] where id = #[flowVars.loanId]]]></db:parameterized-query>
+            <db:parameterized-query><![CDATA[update spring_leaf.loans set loan_status=#[flowVars.value] where id = #[flowVars.loanId]]]></db:parameterized-query>
         </db:update>
     </sub-flow>
     <apikit:mapping-exception-strategy name="api-sys-application-apiKitGlobalExceptionMapping">
