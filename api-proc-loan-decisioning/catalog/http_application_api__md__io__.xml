@@ -3,17 +3,16 @@
   <connectorName>http_application_api</connectorName>
   <metadataIo class="tree-map">
     <entry>
-      <string>GET:/application/{loanId}</string>
+      <string>PATCH:/application/{loanId}</string>
       <map>
         <entry>
           <string>__default__</string>
           <org.mule.tooling.metadata.cache.DefaultMetadataCacheEntry>
             <input class="org.mule.common.metadata.DefaultMetaData">
-              <payload class="org.mule.common.metadata.DefaultUnknownMetaDataModel">
-                <dataType>UNKNOWN</dataType>
-                <metaDataModelPropertiesManager>
-                  <properties/>
-                </metaDataModelPropertiesManager>
+              <payload class="org.mule.tooling.metadata.api.TypeRefMetaDataModel">
+                <connectorName>http_application_api</connectorName>
+                <typeId>PATCH:/application/{loanId}_request</typeId>
+                <category>DEFAULT</category>
               </payload>
               <properties>
                 <entry>
@@ -49,10 +48,11 @@
               </properties>
             </input>
             <output class="org.mule.common.metadata.DefaultMetaData">
-              <payload class="org.mule.tooling.metadata.api.TypeRefMetaDataModel">
-                <connectorName>http_application_api</connectorName>
-                <typeId>GET:/application/{loanId}_response</typeId>
-                <category>DEFAULT</category>
+              <payload class="org.mule.common.metadata.DefaultUnknownMetaDataModel">
+                <dataType>UNKNOWN</dataType>
+                <metaDataModelPropertiesManager>
+                  <properties/>
+                </metaDataModelPropertiesManager>
               </payload>
               <properties>
                 <entry>
