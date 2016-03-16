@@ -37,3 +37,12 @@ schemas:
             application/json: 
               example: !include loan-application-example-out.json
               schema: loan_app_out
+    /status:
+      patch:
+        queryParameters: 
+          statusValue:
+            required: true
+            enum: [approved, rejected, pre-approved]
+        
+        responses:
+          204:

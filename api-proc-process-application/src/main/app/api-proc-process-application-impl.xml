@@ -12,7 +12,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
     <http:request-config name="api-proc-credit-decision-http-config" host="${api-proc-credit-decision.host}" port="${api-proc-credit-decision.port}"  doc:name="HTTP Request Configuration" basePath="/api">
         <http:raml-api-configuration location="api-proc-credit-decision/api-proc-credit-decision.raml"/>
     </http:request-config>
-    <http:request-config name="api-sys-application-http-config" host="${api-sys-application.host}" port="${api-sys-application.port}"  doc:name="HTTP Request Configuration" basePath="/api">
+    <http:request-config name="api-sys-application-http-config" host="sfs-api-sys-application.cloudhub.io" port="80"  doc:name="HTTP Request Configuration" basePath="/api">
         <http:raml-api-configuration location="api-sys-application/api-sys-application.raml"/>
     </http:request-config>
     <flow name="api-proc-process-application-eval-application">
