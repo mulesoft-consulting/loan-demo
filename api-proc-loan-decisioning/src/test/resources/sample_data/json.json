@@ -1,39 +1,54 @@
 {
   "loan_app": {
+    "loan_amount": "5000",
+    "loan_purpose": "Bill Consolidation",
+    "offerNumber": null,
+    "first_name": "Mike",
+    "middle_initial": null,
+    "last_name": "Smith",
+    "birth_date": "04/20/1970",
+    "ssn": "123-44-5555",
     "addresses": [
       {
-        "address1":"123 Main Street",
-        "address2":"",
-        "city":"Chicago"
-        "state":"IL",
-        "zip":12345
-        
+        "isMailingOnly": false,
+        "address1": "123 Main Street",
+        "address2": "",
+        "city": "Chicago",
+        "state": "IL",
+        "zip": 12345
+      },
+      {
+        "isMailingOnly": true,
+        "address1": "PO Box 1234",
+        "address2": "",
+        "city": "Chicago",
+        "state": "IL",
+        "zip": 12345
       }
     ],
-    "birth_date": "01/01/1900",
+    "email_address": "amir.kader@mulesoft.com",
     "contact_numbers": [
       {
-        
+        "isPrimary": true,
+        "phone_number": "312-111-2233",
+        "type": "mobile"
+      },
+      {
+        "isPrimary": false,
+        "phone_number": "312-222-2233",
+        "type": "home"
       }
     ],
-    "email_address": "ricardo@ruben.com",
     "financial_information": {
+      "retired": false,
+      "self_employed": false,
       "employer": {
-        
+        "name": "ACME CORP."
       },
-      "monthly_net_income": 10000,
-      "retired": true,
-      "savings_checkings": "xxxx",
-      "self_employed": true
+      "monthly_net_income": 4000,
+      "savings_checkings": "both"
     },
-    "first_name": "Ricardo",
-    "last_name": "Ruben",
-    "loan_amount": 100000,
-    "loan_application_id": "1234",
-    "loan_purpose": "xxxx",
     "loan_status": "pre-approved",
-    "middle_initial": "",
-    "offerNumber": "????",
-    "ssn": "123-456-789"
+    "loan_application_id": 22
   }
 }

@@ -139,6 +139,12 @@
  							"type" : "string"
  						}
  					}
+ 				},
+ 				"loan_status" : {
+ 					"id" : "http://jsonschema.net/loan_app_root#loan_status",
+ 					"enum" : [ "pre-approved",
+ 							"in-progress", "underwriting",
+ 							"approved", "denied" ]
  				}
  			}
  		}

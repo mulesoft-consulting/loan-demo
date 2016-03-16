@@ -64,7 +64,7 @@
 	    &quot;self_employed&quot;: false,
 	    &quot;employer&quot;: {
 	      &quot;name&quot;: &quot;ACME CORP.&quot;,
-	      &quot;hire_date&quot;: &quot;01/1998&quot;
+	      &quot;hire_date&quot;: &quot;01/01/1998&quot;
 	    },
 	    &quot;monthly_net_income&quot;: 4000,
 	    &quot;savings_checkings&quot;: &quot;both&quot;
@@ -75,7 +75,16 @@
 }</exampleContent>
             </org.mule.common.metadata.property.TextBasedExampleMetaDataModelProperty>
             <org.mule.common.metadata.property.StructureIdentifierMetaDataModelProperty>
-              <metaDataKey class="org.mule.common.metadata.DefaultMetaDataKey" reference="../../../../../org.mule.common.metadata.DefaultMetaDataKey"/>
+              <metaDataKey class="org.mule.common.metadata.DefaultMetaDataKey">
+                <id>GET:/application/{loanId}_response</id>
+                <displayName>GET:/application/{loanId}_response</displayName>
+                <category>DEFAULT</category>
+                <metaDataKeyPropertiesManager>
+                  <properties>
+                    <org.mule.common.metadata.key.property.dsql.DsqlFromMetaDataKeyProperty/>
+                  </properties>
+                </metaDataKeyPropertiesManager>
+              </metaDataKey>
               <derivedStructure>false</derivedStructure>
               <generatedStructure>false</generatedStructure>
             </org.mule.common.metadata.property.StructureIdentifierMetaDataModelProperty>
