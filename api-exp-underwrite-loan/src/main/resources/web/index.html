@@ -20,23 +20,23 @@
 				<div class="col-6">
 					<table class="table">
 						<thead>
-							<tr ng-repeat="x in applications">
+							<tr>
 								<td>Name</td>
 								<td>Last Name</td>
 								<td>Loan Amount</td>
-								<td>Credit Score</td>
+								<td>Loan Purpose</td>
 								<td>Status</td>
 								<td>Actions</td>
 							</tr>
 						</thead>
 						<tbody>
 							<tr ng-repeat="x in applications">
-								<td>{{ x.first_name }}</td>
-								<td>{{ x.last_name }}</td>
-								<td>{{ x.loan_amount }}</td>
-								<td>{{ x.combined_credit_score }}</td>
-								<td>{{ x.status }}</td>
-								<td><a href="#" ng-click="submit(x.loan_application_id)">Process</a></td>
+								<td>{{ x.loan_app.first_name }}</td>
+								<td>{{ x.loan_app.last_name }}</td>
+								<td>{{ x.loan_app.loan_amount }}</td>
+								<td>{{ x.loan_app.loan_purpose }}</td>
+								<td>{{ x.loan_app.loan_status }}</td>
+								<td><a href="#" ng-show="x.loan_app.loan_status == 'pre-approved'" ng-click="submit(x.loan_app.loan_application_id)">Process</a></td>
 							</tr>
 						</tbody>
 					</table>

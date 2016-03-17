@@ -29,7 +29,11 @@ angular
 						
 						$http.post('/api/decision/' + id , { })
 					       .then(function(res){
-					          $scope.response = res.data;             
+					          $scope.response = res.data;  
+					          $http.get('/api/application')
+						       .then(function(res){
+						    	   $scope.applications = res.data;                
+						        });
 					        });
 					}
 
