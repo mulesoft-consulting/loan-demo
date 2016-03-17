@@ -9,8 +9,8 @@
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/resources"/>
-	
 	<classpathentry kind="src" path="src/main/api"/>
 	<classpathentry kind="src" path="src/test/munit"/>
+	<classpathentry kind="con" path="MULE_LIB/Box/org.mule.tooling.ui.contribution.box.3.5.0"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

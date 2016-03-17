@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
@@ -11,7 +11,9 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
         <exception-strategy ref="api-sys-risk-rating-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
     </flow>
     <flow name="post:/evaluate:application/json:api-sys-risk-rating-config">
-        <set-variable variableName="random" value="#[new java.util.Random().nextInt(100) % 2]" doc:name="Random Number"/>
+        <enricher doc:name="Message Enricher" target="#[flowVars.loan_authorization]">
+            <flow-ref name="drools-run-validations" doc:name="drools-run-validations"/>
+        </enricher>
         <dw:transform-message doc:name="Transform Message">
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/json
@@ -19,7 +21,7 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
 {
 	address1: payload.address1,
 	address2: payload.address2,
-	authorization: "approved" when flowVars.random == 0 otherwise "rejected",
+	authorization: flowVars.loan_authorization[0].status,
 	bureauScores: payload.bureauScores map ((bureauScore , indexOfBureauScore) -> bureauScore),
 	city: payload.city,
 	combinedFicoScore: payload.combinedFicoScore,

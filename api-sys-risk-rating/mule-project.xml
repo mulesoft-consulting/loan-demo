@@ -3,4 +3,5 @@
     <name>api-sys-risk-rating</name>
     <description></description>
     <muleExtension name="APIkit" qualifier="org.mule.tooling.apikit.3.7.0"/>
+    <muleExtension name="Box" qualifier="org.mule.tooling.ui.contribution.box.3.5.0"/>
 </mule-project>

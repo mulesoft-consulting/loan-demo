@@ -1,0 +1,10 @@
+<batch-execution>
+  <insert out-identifier="e1" return-object="true" entry-point="DEFAULT">
+    <"sfs.springleaf.risk_rating.LoanApp">
+        <monthlyNetIncome>6000</monthlyNetIncome>
+        <combinedFicoScore>700</combinedFicoScore>
+        <loanAuthorization>REJECTED</loanAuthorization>
+    </"sfs.springleaf.risk_rating.LoanApp">
+  </insert>
+  <fire-all-rules out-identifier="myFireCommand"/>
+</batch-execution>
