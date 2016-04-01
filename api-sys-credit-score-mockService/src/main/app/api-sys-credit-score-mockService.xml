@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:wmq="http://www.mulesoft.org/schema/mule/ee/wmq"
+	xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/wmq http://www.mulesoft.org/schema/mule/ee/wmq/current/mule-wmq-ee.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+
+	<wmq:connector name="WMQ" hostName="${mq.hostname}" port="${mq.port}" queueManager="${mq.queueManager}" channel="${mq.channel}" username="${mq.username}" transportType="CLIENT_MQ_TCPIP" specification="1.1" validateConnections="true" doc:name="WMQ"/>
+	<flow name="trans-union_flow">
+        <wmq:inbound-endpoint queue="sl.trans_union.request" connector-ref="WMQ" metadata:id="0886ce19-079e-4901-befd-88abc6c875a5" doc:name="WMQ" mimeType="application/json"/>
+        <logger message="=== PROCESSING Trans Union ===" level="INFO" doc:name="Logger"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="837b7e18-4aa1-4029-916c-606db2073036">
+            <dw:input-payload doc:sample="json.json" mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload.firstName ++ payload.lastName]]></dw:set-payload>
+            <dw:set-variable variableName="originalRequest"><![CDATA[%dw 1.0
+%output application/java
+---
+payload]]></dw:set-variable>
+        </dw:transform-message>
+        <scripting:transformer doc:name="Groovy">
+            <scripting:script engine="Groovy"><![CDATA[def str = payload
+def sum = 0
+str.each {letter -> sum+=(int)letter}
+sum %= 900
+
+if(sum < 500) {
+	return (500+sum < 900)?500+sum:400+sum
+}
+
+return sum]]></scripting:script>
+        </scripting:transformer>
+        <dw:transform-message doc:name="Transform Message" metadata:id="1ba95fc5-afdb-42e6-85db-c0ea860a5ba1">
+            <dw:input-payload doc:sample="MyPojo.dwl"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	firstName: flowVars.originalRequest.firstName,
+	middleInitial: flowVars.originalRequest.middleInitial,
+	lastName: flowVars.originalRequest.lastName,
+	individualTaxIdNumber: flowVars.originalRequest.individualTaxIdNumber,
+	address1: flowVars.originalRequest.address1,
+	address2: flowVars.originalRequest.address2,
+	city: flowVars.originalRequest.city,
+	state: flowVars.originalRequest.state,
+	zipCode: flowVars.originalRequest.zipCode,
+	monthlyNetIncome: flowVars.originalRequest.monthlyNetIncome,
+	bureau: "transunion",
+	ficoScore: payload
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <logger message="=== END PROCESSING Trans Union ===" level="INFO" doc:name="Logger"/>
+    </flow>
+    <flow name="equifax_flow">
+        <wmq:inbound-endpoint queue="sl.equifax.request" connector-ref="WMQ" metadata:id="b2bd287f-ec7a-433f-89e5-da1798ff91be" doc:name="WMQ" mimeType="application/json"/>
+        <logger message="=== PROCESSING Equifax ===" level="INFO" doc:name="Logger"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="02d53772-f5dc-40a8-afd5-45923a859c53">
+            <dw:input-payload doc:sample="json_1.json" mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload.address1 ++ payload.address2 ++ payload.city ++ payload.state]]></dw:set-payload>
+            <dw:set-variable variableName="originalRequest"><![CDATA[%dw 1.0
+%output application/java
+---
+payload]]></dw:set-variable>
+        </dw:transform-message>
+        <scripting:transformer doc:name="Groovy">
+            <scripting:script engine="Groovy"><![CDATA[def str = payload
+def sum = 0
+str.each {letter -> sum+=(int)letter}
+sum %= 900
+
+if(sum < 500) {
+	return (500+sum < 900)?500+sum:400+sum
+}
+
+return sum]]></scripting:script>
+        </scripting:transformer>
+        <dw:transform-message doc:name="Transform Message" metadata:id="0b3610ba-a061-48ee-8b96-1ed3cab02a99">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	firstName: flowVars.originalRequest.firstName,
+	middleInitial: flowVars.originalRequest.middleInitial,
+	lastName: flowVars.originalRequest.lastName,
+	individualTaxIdNumber: flowVars.originalRequest.individualTaxIdNumber,
+	address1: flowVars.originalRequest.address1,
+	address2: flowVars.originalRequest.address2,
+	city: flowVars.originalRequest.city,
+	state: flowVars.originalRequest.state,
+	zipCode: flowVars.originalRequest.zipCode,
+	monthlyNetIncome: flowVars.originalRequest.monthlyNetIncome,
+	bureau: "equifax",
+	ficoScore: payload
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <logger message="=== END PROCESSING Equifax ===" level="INFO" doc:name="Logger"/>
+    </flow>
+    <flow name="experian_flow">
+        <wmq:inbound-endpoint queue="sl.experian.request" connector-ref="WMQ" doc:name="WMQ"/>
+        <logger message="=== PROCESSING Experian ===" level="INFO" doc:name="Logger"/>
+        <set-variable variableName="originalRequest" value="#[payload]" doc:name="Save Original Requet"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="0ab9fc68-ba48-451f-bff1-76c42315fcea">
+            <dw:input-payload doc:sample="string.dwl"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload[92..107] ++ payload[229..239]
+	
+]]></dw:set-payload>
+        </dw:transform-message>
+        <scripting:transformer doc:name="Groovy">
+            <scripting:script engine="Groovy"><![CDATA[def str = payload
+def sum = 0
+str.each {letter -> sum+=(int)letter}
+def total = sum % 900
+
+if(total < 500) {
+	total = (500+total < 900)?500+total:400+total
+}
+
+def msg = flowVars['originalRequest']
+msg+="experian".padRight(15)
+msg+=String.format("%04d",total)
+
+return msg]]></scripting:script>
+        </scripting:transformer>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <logger message="=== END PROCESSING Experian ===" level="INFO" doc:name="Logger"/>
+    </flow>
+</mule>

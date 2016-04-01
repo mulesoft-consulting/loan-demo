@@ -1,0 +1,48 @@
+#%RAML 0.8
+
+title: Loan Application System API
+baseUri: http://sfs-api-sys-application.cloudhub.io/api
+
+schemas:
+  - loan_app_in: !include loan-application-schema-in.json
+    loan_app_out: !include loan-application-schema-out.json
+    loan_apps_out: !include loan-applications-schema-out.json
+    loan_app_patch: !include loan-application-patch-schema.json
+    
+/application:
+  get:
+    responses:
+      200:
+        body: 
+          application/json:
+            schema: loan_apps_out 
+            example: !include loan-applications-example-out.json
+
+  post: 
+    body: 
+      application/json: 
+        example: !include loan-application-example-in.json
+        schema: loan_app_in
+        
+    responses: 
+      200:
+        body: 
+          application/json: 
+            example: !include loan-application-example-out.json
+            schema: loan_app_out
+            
+  /{loanId}:
+    get: 
+      responses: 
+        200:
+          body: 
+            application/json: 
+              example: !include loan-application-example-out.json
+              schema: loan_app_out
+    patch:
+      body:
+        application/json:
+          schema: loan_app_patch
+          example: !include loan-application-patch-example.json
+      responses:
+        204:

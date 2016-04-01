@@ -1,0 +1,21 @@
+#%RAML 0.8
+
+title: Credit Decision Process API
+baseUri: http://www.mythicalfinance.com/api/proc/credit-decision
+
+/decision:
+  post:
+    queryParameters: 
+      scoreType:
+        required: true
+        enum: [hard, soft]
+    body: 
+      application/json:
+        example: !include api-proc-credit-decision-example-in.json
+        schema: !include api-proc-credit-decision-schema-in.json
+    responses: 
+      200: 
+        body: 
+          application/json: 
+            example: !include api-proc-credit-decision-example-out.json
+            schema: !include api-proc-credit-decision-schema-out.json

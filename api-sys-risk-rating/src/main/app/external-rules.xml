@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <http:request-config name="HTTP_Drools_Container" host="${drools.api.host}" port="${drools.api.port}" basePath="${drools.api.basePath}" doc:name="HTTP Request Configuration">
+        <http:basic-authentication username="${drools.user}" password="${drools.password}"/>
+    </http:request-config>
+
+<flow name="drools-run-validations">
+        <dw:transform-message doc:name="Transform Message">
+            <dw:input-payload doc:sample="json.json" mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%var timestamp=now as :string {format: "yyyyMMddhhHHmmss"}
+%output application/xml
+---
+batch-execution: {
+  insert @(out-identifier: "e" ++ timestamp, return-object: true, entry-point: "DEFAULT"): {
+    "sfs.springleaf.risk_rating.LoanApp": {
+      monthlyNetIncome: payload.monthlyNetIncome,
+      combinedFicoScore: payload.combinedFicoScore,
+      loanAuthorization: "rejected"
+    }
+  }
+ }
+++ 
+fire-all-rules @(out-identifier: "myFireCommand"): {}
+]]></dw:set-payload>
+        </dw:transform-message>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <http:request config-ref="HTTP_Drools_Container" path="/instances/${drools.container}" method="POST" doc:name="Run all Rules">
+            <http:request-builder>
+                <http:header headerName="X-KIE-ContentType" value="XSTREAM"/>
+                <http:header headerName="Content-Type" value="application/xml"/>
+            </http:request-builder>
+        </http:request>
+        <set-payload value="#[xpath(&quot;/org.kie.server.api.model.ServiceResponse/result/text()&quot;)]" doc:name="Extract Response Payload"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="1ec1dabb-cfc2-42ca-82e6-c303f6cc2a08">
+            <dw:input-payload doc:sample="string.dwl" mimeType="application/xml"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+
+payload.execution-results.*result map ((result , indexOfResult) -> {
+	status: result."sfs.springleaf.risk__rating.LoanApp".loanAuthorization	
+})
+
+]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
+
+</mule>

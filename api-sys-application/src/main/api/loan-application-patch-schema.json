@@ -1,0 +1,19 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"id":"http://jsonschema.net/loan_app_root#patch_loan",
+  	"type": "object",
+ 	"properties": {
+		"operation" : {
+			"id" : "http://jsonschema.net/loan_app_root#op",
+			"type" : "string"
+		},
+		"path" : {
+			"id" : "http://jsonschema.net/loan_app_root#path",
+			"type" : "string"
+		},
+		"value" : {
+			"id" : "http://jsonschema.net/loan_app_root#value",
+			"type" : "string"
+		}
+ 	}
+}

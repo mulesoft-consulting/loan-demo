@@ -1,0 +1,10 @@
+[
+  {
+    "loan_application_id": 1234,
+    "first_name": "Jim",
+    "last_name": "Doyle",
+    "loan_amount": 250000,
+    "combined_credit_score": 795,
+    "status": "pre-approved"
+  }
+]

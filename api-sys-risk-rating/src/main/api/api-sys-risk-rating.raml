@@ -1,0 +1,18 @@
+#%RAML 0.8
+
+title: Risk Rating System API
+baseUri: http://www.mythicalfinance.com/api/sys/risk-rating
+version: 1.0
+
+/evaluate:
+  post: 
+    body:   
+      application/json: 
+        schema: !include api-sys-risk-rating-schema.json
+        example: !include api-sys-risk-rating-example.json
+    responses:
+      200:
+        body:
+          application/json: 
+            schema: !include api-sys-risk-rating-schema.json
+            example: !include api-sys-risk-rating-example.json

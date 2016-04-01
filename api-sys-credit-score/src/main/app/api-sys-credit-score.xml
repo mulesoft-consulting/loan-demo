@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:wmq="http://www.mulesoft.org/schema/mule/ee/wmq" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/ee/wmq http://www.mulesoft.org/schema/mule/ee/wmq/current/mule-wmq-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+	<wmq:connector name="WMQ" hostName="${mq.hostname}" port="${mq.port}" queueManager="${mq.queueManager}" channel="${mq.channel}" username="${mq.username}" transportType="CLIENT_MQ_TCPIP" specification="1.1" validateConnections="true" doc:name="WMQ"/>
+    <apikit:config name="api-config" raml="api-sys-credit-score.raml" consoleEnabled="true" consolePath="console" doc:name="Router" />
+    <flow name="api-main">
+        <http:listener config-ref="http-lc-0.0.0.0-8081" path="/api/*" doc:name="HTTP" />
+        <apikit:router config-ref="api-config" doc:name="APIkit Router" />
+        <exception-strategy ref="api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy" />
+    </flow>
+    <flow name="post:/scores:application/json:api-config">
+        <scatter-gather doc:name="Scatter-Gather">
+            <flow-ref name="transunion_Flow" doc:name="transunion_Flow"/>
+            <flow-ref name="equifax_Flow" doc:name="equifax_Flow"/>
+            <flow-ref name="experian_Flow" doc:name="experian_Flow"/>
+        </scatter-gather>
+        <set-variable variableName="transunion" value="#[payload[0]]" mimeType="application/json" doc:name="transunion"/>
+        <set-variable variableName="equifax" value="#[payload[1]]" mimeType="application/json" doc:name="equifax"/>
+        <set-variable variableName="experian" value="#[payload[2]]" mimeType="application/json" doc:name="experian"/>
+        <dw:transform-message doc:name="Create response" metadata:id="e0c7f12d-48b4-4b76-9205-88710a2a3e62">
+            <dw:input-payload doc:sample="list_json.json" mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+%var data = flowVars.equifax
+---
+{
+	firstName: data.firstName,
+	middleInitial: data.middleInitial,
+	lastName: data.lastName,
+	individualTaxIdNumber: data.individualTaxIdNumber,
+	address1: data.address1,
+	address2: data.address2,
+	city: data.city,
+	state: data.state,
+	zipCode: data.zipCode,
+	monthlyNetIncome: data.monthlyNetIncome,
+	combinedFicoScore: (flowVars.equifax.ficoScore + flowVars.transunion.ficoScore + flowVars.experian.ficoScore)/3 as :number as :string {format:"##.##"},
+	bureauScores: [{
+		bureau: flowVars.equifax.bureau,
+		ficoScore: flowVars.equifax.ficoScore
+	},
+    {
+		bureau: flowVars.transunion.bureau,
+		ficoScore: flowVars.transunion.ficoScore
+	},
+    {
+		"bureau": trim flowVars.experian.bureau,
+		"ficoScore": flowVars.experian.ficoScore
+	}
+	]
+}]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
+    <flow name="transunion_Flow">
+        <object-to-string-transformer doc:name="Object to String"/>
+        <request-reply doc:name="Request-Reply" timeout="30000">
+            <wmq:outbound-endpoint queue="sl.trans_union.request" doc:name="WMQ" connector-ref="WMQ" mimeType="application/json"/>
+            <wmq:inbound-endpoint queue="sl.trans_union.response" doc:name="WMQ" connector-ref="WMQ"/>
+        </request-reply>
+        <tracking:custom-event event-name="Transunion Response" doc:name="Custom Business Event"/>
+        
+        <wmq:message-info-mapping/>
+    </flow>
+    <flow name="equifax_Flow">
+        <object-to-string-transformer doc:name="Object to String"/>
+        <request-reply doc:name="Request-Reply" timeout="30000">
+            <wmq:outbound-endpoint queue="sl.equifax.request" connector-ref="WMQ" doc:name="WMQ" mimeType="application/json"/>
+            <wmq:inbound-endpoint queue="sl.equifax.response" connector-ref="WMQ" doc:name="WMQ"/>
+        </request-reply>
+        <tracking:custom-event event-name="Equifax Response" doc:name="Custom Business Event"/>
+        
+        <wmq:message-info-mapping/>
+    </flow>
+     <flow name="experian_Flow">
+        <dw:transform-message metadata:id="6c596be6-ab18-441f-bd5f-fc2626eac120" doc:name="Create plain request">
+            <dw:input-payload doc:sample="json.json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload]]></dw:set-payload>
+        </dw:transform-message>
+        <scripting:transformer doc:name="Groovy">
+            <scripting:script engine="Groovy"><![CDATA[def s = payload['firstName']? payload['firstName'].padRight(45):"".padRight(45)
+s+=payload['middleInitial']? payload['middleInitial'].padRight(2):"".padRight(2)
+s+=payload['lastName']? payload['lastName'].padRight(45):"".padRight(45)
+s+=payload['individualTaxIdNumber']?payload['individualTaxIdNumber'].padRight(15):"".padRight(15)
+s+=payload['address1']?payload['address1'].padRight(50):"".padRight(50)
+s+=payload['address2']?payload['address2'].padRight(50):"".padRight(50)
+s+=payload['city']?payload['city'].padRight(15):"".padRight(15)
+s+=payload['state']?payload['state'].padRight(2):"".padRight(2)
+s+=payload['zipCode']?payload['zipCode'].padRight(5):"".padRight(5)
+s+=payload['monthlyNetIncome']?String.format("%010d",payload['monthlyNetIncome']):"".padLeft(10,"0")
+]]></scripting:script>
+        </scripting:transformer>
+        <request-reply doc:name="Request-Reply" timeout="30000">
+            <wmq:outbound-endpoint queue="sl.experian.request" connector-ref="WMQ" doc:name="WMQ"/>
+            <wmq:inbound-endpoint queue="sl.experian.response" connector-ref="WMQ" doc:name="WMQ"/>
+        </request-reply>
+        <tracking:custom-event event-name="Experience Response" doc:name="Custom Business Event"/>
+        
+        <dw:transform-message metadata:id="119d5c17-32c5-44f5-b84e-01b610eef969" doc:name="Create JSON response">
+        	<dw:input-payload doc:sample="string.json" mimeType="application/java"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	firstName: payload[0..44],
+	middleInitial: payload[45..46],
+	lastName: payload[47..91],
+	individualTaxIdNumber: payload[92..106],
+	address1: payload[107..157],
+	address2: payload[158..206],
+	city: payload[207..221],
+	state: payload[222..223],
+	zipCode: payload[224..228],
+	monthlyNetIncome: payload[229..238] as :number,
+	bureau: payload[239..253],
+	ficoScore: payload[254..257] as :number
+	
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <wmq:message-info-mapping/>
+    </flow>
+     
+    <apikit:mapping-exception-strategy name="api-apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+</mule>

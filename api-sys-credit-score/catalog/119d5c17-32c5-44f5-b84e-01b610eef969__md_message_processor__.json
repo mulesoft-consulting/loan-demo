@@ -1,0 +1,16 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "FLN"
+        }
+    },
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "bureau_response"
+        }
+    },
+    "id": "119d5c17-32c5-44f5-b84e-01b610eef969",
+    "version": "5.2.0.0"
+}

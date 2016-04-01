@@ -1,0 +1,19 @@
+{
+  "address1": "123 Street",
+  "address2": "",
+  "authorization": "PRE-APPROVED",
+  "bureauScores": [
+    {
+      
+    }
+  ],
+  "city": "BA",
+  "combinedFicoScore": 600,
+  "firstName": "Raul",
+  "individualTaxIdNumber": "123-456-789",
+  "lastName": "Hugo",
+  "middleInitial": "",
+  "monthlyNetIncome": 1000,
+  "state": "????",
+  "zipCode": "????"
+}

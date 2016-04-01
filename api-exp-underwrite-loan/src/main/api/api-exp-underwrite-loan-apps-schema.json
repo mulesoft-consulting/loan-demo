@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://jsonschema.net",
+    "type": "object",
+    "properties": {
+      "loan_application_id": {
+        "id": "http://jsonschema.net/0/loan_application_id",
+        "type": "integer"
+      },
+      "first_name": {
+        "id": "http://jsonschema.net/0/first_name",
+        "type": "string"
+      },
+      "last_name": {
+        "id": "http://jsonschema.net/0/last_name",
+        "type": "string"
+      },
+      "loan_amount": {
+        "id": "http://jsonschema.net/0/loan_amount",
+        "type": "integer"
+      },
+      "combined_credit_score": {
+        "id": "http://jsonschema.net/0/combined_credit_score",
+        "type": "integer"
+      },
+      "status": {
+        "id": "http://jsonschema.net/0/combined_credit_score",
+        "enum": ["approved", "denied", "pre-approved"]
+      }
+    },
+    "required": [
+      "loan_application_id",
+      "first_name",
+      "last_name",
+      "loan_amount",
+      "combined_credit_score"
+    ]
+  }

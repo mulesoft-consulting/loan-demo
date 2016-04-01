@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+    <apikit:config name="api-proc-loan-decisioning-config" raml="api-proc-loan-decisioning.raml" consoleEnabled="true" consolePath="console" doc:name="Router"/>
+    <http:request-config name="http_api_risk_rating" host="sfs-api-sys-risk-rating.cloudhub.io" port="80" basePath="/api" doc:name="HTTP Request Configuration">
+        <http:raml-api-configuration location="api-sys-risk-rating/api-sys-risk-rating.raml"/>
+    </http:request-config>
+    <http:request-config name="http_application_api" host="sfs-api-sys-application.cloudhub.io" port="80" basePath="/api" doc:name="HTTP Request Configuration">
+        <http:raml-api-configuration location="api-sys-application/api-sys-application.raml"/>
+    </http:request-config>
+    <http:request-config name="http_api_credit_decision" host="sfs-api-proc-credit-decision.cloudhub.io" port="80" basePath="/api" doc:name="HTTP Request Configuration">
+        <http:raml-api-configuration location="api-proc-credit-decision/api-proc-credit-decision.raml"/>
+    </http:request-config>
+    <http:request-config name="http_api_proc_book_loan" host="sfs-api-proc-book-loan.cloudhub.io" port="80" basePath="/api" doc:name="HTTP Request Configuration">
+        <http:raml-api-configuration location="api-proc-book-loan/api-proc-book-loan.raml"/>
+    </http:request-config>
+    <flow name="api-proc-loan-decisioning-main">
+        <http:listener config-ref="http-lc-0.0.0.0-8081" path="/api/*" doc:name="HTTP"/>
+        <apikit:router config-ref="api-proc-loan-decisioning-config" doc:name="APIkit Router"/>
+        <exception-strategy ref="api-proc-loan-decisioning-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="post:/decison/{loan_application_id}:api-proc-loan-decisioning-config">
+        <http:request config-ref="http_application_api" path="/application/{loanId}" method="GET" doc:name="Get Loan">
+            <http:request-builder>
+                <http:uri-param paramName="loanId" value="#[flowVars.loan_application_id]"/>
+            </http:request-builder>
+        </http:request>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:input-payload doc:sample="json.json" mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	firstName: payload.loan_app.first_name default "",
+	middleInitial: payload.loan_app.middle_initial default "",
+	lastName: payload.loan_app.last_name default "",
+	individualTaxIdNumber: payload.loan_app.ssn,
+	address1: payload.loan_app.addresses[0].address1 default "",
+	address2: payload.loan_app.addresses[0].address2 default "",
+	city: payload.loan_app.addresses[0].city default "",
+	state: payload.loan_app.addresses[0].state default "",
+	zipCode: payload.loan_app.addresses[0].zip as :string default "0000",
+	monthlyNetIncome: payload.loan_app.financial_information.monthly_net_income as :string {format: "##"} as :number
+	
+}]]></dw:set-payload>
+            <dw:set-variable variableName="loan_information"><![CDATA[%dw 1.0
+%output application/java
+---
+payload.loan_app]]></dw:set-variable>
+        </dw:transform-message>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <http:request config-ref="http_api_credit_decision" path="/decision" method="POST" doc:name="Get Credit Decission">
+            <http:request-builder>
+                <http:query-param paramName="scoreType" value="hard"/>
+            </http:request-builder>
+        </http:request>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload]]></dw:set-payload>
+            <dw:set-variable variableName="combinedFicoScore"><![CDATA[%dw 1.0
+%output application/java
+---
+payload.combinedFicoScore as :number {class: "int"}]]></dw:set-variable>
+            <dw:set-variable variableName="credit_decission"><![CDATA[%dw 1.0
+%output application/java
+---
+payload]]></dw:set-variable>
+        </dw:transform-message>
+        <choice doc:name="If Approved">
+            <when expression="#[payload.authorization =='approved']">
+                <flow-ref name="call_risk_Flow" doc:name="call_risk_Flow"/>
+            </when>
+            <otherwise>
+                <set-variable variableName="loan_status" value="#[payload.authorization]" doc:name="Save Loan Status"/>
+                <logger message="&quot;Loan not Authorized status: #[payload.authorization]&quot;" level="INFO" category="[CREDIT_DECISION]" doc:name="Logger"/>
+            </otherwise>
+        </choice>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	first_name: flowVars.credit_decission.firstName,
+	last_name: flowVars.credit_decission.lastName,
+	loan_amount: flowVars.loan_information.loan_amount,
+	loan_application_id: flowVars.loan_application_id as :number,
+	combined_credit_score: flowVars.combinedFicoScore,
+	status: flowVars.loan_status
+}
+]]></dw:set-payload>
+        </dw:transform-message>
+        <async doc:name="Async">
+            <flow-ref name="update_loan_statusSub_Flow" doc:name="update_loan_statusSub_Flow"/>
+        </async>
+    </flow>
+    <sub-flow name="update_loan_statusSub_Flow">
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	operation: "replace",
+	path: "/status",
+	value: flowVars.loan_status
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <http:request config-ref="http_application_api" path="/application/{loanId}" method="PATCH" doc:name="HTTP">
+            <http:request-builder>
+                <http:uri-param paramName="loanId" value="#[flowVars.loan_application_id]"/>
+            </http:request-builder>
+        </http:request>
+    </sub-flow>
+    <sub-flow name="call_risk_Flow">
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	address1: payload.address1,
+	address2: payload.address2,
+	authorization: payload.authorization,
+	bureauScores: payload.bureauScores map ((bureauScore , indexOfBureauScore) -> bureauScore),
+	city: payload.city,
+	combinedFicoScore: flowVars.combinedFicoScore,
+	firstName: payload.firstName,
+	individualTaxIdNumber: payload.individualTaxIdNumber,
+	lastName: payload.lastName,
+	middleInitial: payload.middleInitial,
+	monthlyNetIncome: payload.monthlyNetIncome as :string {format: "##"} as :number,
+	state: payload.state,
+	zipCode: payload.zipCode
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <http:request config-ref="http_api_risk_rating" path="/evaluate" method="POST" doc:name="Evaluate Risk"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload]]></dw:set-payload>
+        </dw:transform-message>
+        <choice doc:name="Choice">
+            <when expression="#[payload.authorization == &quot;approved&quot;]">
+                <flow-ref name="book_loan_Flow" doc:name="book_loan_Flow"/>
+            </when>
+            <otherwise>
+                <set-variable variableName="loan_status" value="#[payload.authorization]" doc:name="Save Loan Status"/>
+                <logger message="&quot;Loan not Authorized status: #[payload.authorization]&quot;" level="INFO" category="RISK_DECISION" doc:name="Logger"/>
+            </otherwise>
+        </choice>
+    </sub-flow>
+    <sub-flow name="book_loan_Flow">
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	applicationDecisionStatus: payload.authorization,
+	loanAccountStatus: flowVars.loan_information.loan_status,
+	noteAmount: flowVars.loan_information.loan_amount as :number,
+	purposeCode: flowVars.loan_information.loan_purpose,
+	requestedAmount: flowVars.loan_information.loan_amount as :number,
+	loanDecisionDate: now as :string {format: "yyyy-MM-dd"},
+	noteNumber: flowVars.loan_information.loan_application_id as :number,
+	term: "15",
+	totalNumberOfPayments: 180
+}]]></dw:set-payload>
+            <dw:set-variable variableName="loan_status"><![CDATA[%dw 1.0
+%output application/java
+---
+payload.authorization]]></dw:set-variable>
+        </dw:transform-message>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <http:request config-ref="http_api_proc_book_loan" path="/account" method="POST" doc:name="Create Account"/>
+    </sub-flow>
+    <apikit:mapping-exception-strategy name="api-proc-loan-decisioning-apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+</mule>

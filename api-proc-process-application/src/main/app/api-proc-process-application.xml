@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:context="http://www.springframework.org/schema/context" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <context:property-placeholder location="api.properties" />
+    <apikit:config name="apiConfig" raml="api-proc-process-application.raml" consoleEnabled="true" consolePath="console" doc:name="Router" />
+    <flow name="main">
+        <http:listener config-ref="http-lc-0.0.0.0-8081" doc:name="HTTP" path="/api/*" />
+        <apikit:router config-ref="apiConfig" doc:name="APIkit Router" />
+        <exception-strategy ref="apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy" />
+    </flow>
+    <flow name="get:/application:apiConfig">
+        <http:request config-ref="api-sys-application-http-config" path="/application" method="GET" doc:name="HTTP" />
+    </flow>
+    <flow name="get:/application/{loanId}:apiConfig">
+        <http:request config-ref="api-sys-application-http-config" path="/application/{loanId}" method="GET" doc:name="HTTP">
+            <http:request-builder>
+                <http:uri-param paramName="loanId" value="#[flowVars.loanId]" />
+            </http:request-builder>
+        </http:request>
+    </flow>
+    <flow name="post:/application:application/json:apiConfig">
+        <flow-ref name="api-proc-process-application-eval-application" doc:name="api-proc-process-application-eval-application" />
+    </flow>
+    <flow name="patch:/application/{loanId}/status:apiConfig">
+        <set-variable variableName="statusValue" value="#[message.inboundProperties.'http.query.params'.statusValue]" doc:name="statusValue"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	operation: "replace",
+	path: "/status",
+	value: flowVars.statusValue
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <http:request config-ref="api-sys-application-http-config" path="/application/{loanId}" method="PATCH" doc:name="HTTP">
+            <http:request-builder>
+                <http:uri-param paramName="loanId" value="#[flowVars.loanId]"/>
+            </http:request-builder>
+        </http:request>
+    </flow>
+    <apikit:mapping-exception-strategy name="apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+</mule>

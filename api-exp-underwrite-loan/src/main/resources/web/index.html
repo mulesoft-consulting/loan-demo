@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<script type="text/javascript" src="js/angular.min.js"></script>
+<script type="text/javascript" src="js/angular-sanitize.min.js"></script>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
+
+</head>
+<body>
+	<div ng-app="myModule" class="container">
+		<div ng-controller="FormController">
+			<div class="row">
+				<div class="col-sm-2">&nbsp</div>
+				<div class="col-6">
+					<table class="table">
+						<thead>
+							<tr>
+								<td>Name</td>
+								<td>Last Name</td>
+								<td>Loan Amount</td>
+								<td>Loan Purpose</td>
+								<td>Status</td>
+								<td>Actions</td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="x in applications">
+								<td>{{ x.loan_app.first_name }}</td>
+								<td>{{ x.loan_app.last_name }}</td>
+								<td>{{ x.loan_app.loan_amount }}</td>
+								<td>{{ x.loan_app.loan_purpose }}</td>
+								<td>{{ x.loan_app.loan_status }}</td>
+								<td><a href="#" ng-show="x.loan_app.loan_status == 'pre-approved'" ng-click="submit(x.loan_app.loan_application_id)">Process</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="col-sm-4">&nbsp</div>
+			</div>
+			<pre>response = {{response | json}}</pre>
+		</div>
+	</div>
+</body>
+</html>

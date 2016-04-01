@@ -1,0 +1,19 @@
+#%RAML 0.8
+
+title: Process Loan Decisioning API
+baseUri: http://0.0.0.0:8081/api
+version: 1.0
+
+/decison:
+  /{loan_application_id}:
+    uriParameters: 
+      loan_application_id:
+        required: true
+        type: string       
+    post: 
+      responses: 
+        200: 
+          body: 
+            application/json:
+              schema: !include api-proc-loan-decisioning-schema.json
+              example: !include api-proc-loan-decisioning-example.json

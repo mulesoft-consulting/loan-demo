@@ -1,0 +1,8 @@
+  {
+    "loan_application_id": 0,
+    "first_name": "",
+    "last_name": "",
+    "loan_amount": 0,
+    "combined_credit_score": 0,
+    "status": "approved"
+  }
