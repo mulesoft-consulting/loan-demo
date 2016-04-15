@@ -37,10 +37,18 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	monthlyNetIncome: payload.monthlyNetIncome,
 	state: payload.state,
 	zipCode: payload.zipCode,
-	authorization:  "pre-approved" when flowVars.scoreType == "soft" and payload.combinedFicoScore >= 680 
-		otherwise "approved" when flowVars.scoreType == "hard" and payload.combinedFicoScore >= 680 
-		otherwise "denied"
+	authorization:  
+        "approved" when (flowVars.scoreType == "hard" and payload.combinedFicoScore >= 680) 
+        otherwise ("pre-approved" when (flowVars.scoreType == "soft" and payload.combinedFicoScore >= 680) 
+        otherwise "denied")
 }]]></dw:set-payload>
         </dw:transform-message>
+        <tracking:custom-event event-name="applicantCreditDecision" doc:name="Custom Business Event">
+            <tracking:meta-data key="firstName" value="#[json:firstName]"/>
+            <tracking:meta-data key="lastName" value="#[json:lastName]"/>
+            <tracking:meta-data key="combinedFicoScore" value="#[json:combinedFicoScore]"/>
+            <tracking:meta-data key="decision" value="#[json:authorization]"/>
+            <tracking:meta-data key="scoreType" value="#[flowVars.scoreType]"/>
+        </tracking:custom-event>
     </flow>
 </mule>

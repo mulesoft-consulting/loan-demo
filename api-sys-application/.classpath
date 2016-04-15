@@ -11,6 +11,6 @@
 	<classpathentry kind="con" path="MULE_LIB/APIkit/org.mule.tooling.apikit.3.7.0"/>
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" path="/api-sys-zgateway_2_2_0"/>
-	<classpathentry kind="lib" path="src/main/app/lib/mysql-connector-java-5.1.38-bin.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/mysql-connector-java-5.1.36-bin.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

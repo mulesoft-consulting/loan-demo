@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
-http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/api-platform-gw http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd">
     <apikit:config name="api-proc-loan-decisioning-config" raml="api-proc-loan-decisioning.raml" consoleEnabled="true" consolePath="console" doc:name="Router"/>
     <http:request-config name="http_api_risk_rating" host="sfs-api-sys-risk-rating.cloudhub.io" port="80" basePath="/api" doc:name="HTTP Request Configuration">
         <http:raml-api-configuration location="api-sys-risk-rating/api-sys-risk-rating.raml"/>
@@ -18,6 +19,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
     <http:request-config name="http_api_proc_book_loan" host="sfs-api-proc-book-loan.cloudhub.io" port="80" basePath="/api" doc:name="HTTP Request Configuration">
         <http:raml-api-configuration location="api-proc-book-loan/api-proc-book-loan.raml"/>
     </http:request-config>
+    <api-platform-gw:api apiName="sfs-api-proc-loan-decisioning" id="sfs-api-proc-loan-decisioning" version="1.0" flowRef="api-proc-loan-decisioning-main" create="true" apikitRef="api-proc-loan-decisioning-config" doc:name="API Autodiscovery"/>
     <flow name="api-proc-loan-decisioning-main">
         <http:listener config-ref="http-lc-0.0.0.0-8081" path="/api/*" doc:name="HTTP"/>
         <apikit:router config-ref="api-proc-loan-decisioning-config" doc:name="APIkit Router"/>
@@ -43,9 +45,8 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 	address2: payload.loan_app.addresses[0].address2 default "",
 	city: payload.loan_app.addresses[0].city default "",
 	state: payload.loan_app.addresses[0].state default "",
-	zipCode: payload.loan_app.addresses[0].zip as :string default "0000",
+	zipCode: payload.loan_app.addresses[0]."zip" as :string default "0000",
 	monthlyNetIncome: payload.loan_app.financial_information.monthly_net_income as :string {format: "##"} as :number
-	
 }]]></dw:set-payload>
             <dw:set-variable variableName="loan_information"><![CDATA[%dw 1.0
 %output application/java
