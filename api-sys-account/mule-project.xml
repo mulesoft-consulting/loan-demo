@@ -3,4 +3,5 @@
     <name>api-sys-account</name>
     <description></description>
     <muleExtension name="APIkit" qualifier="org.mule.tooling.apikit.3.7.0"/>
+    <muleExtension name="IBM CTG" qualifier="org.mule.tooling.ui.contribution.ibm-ctg.3.8.0"/>
 </mule-project>

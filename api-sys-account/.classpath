@@ -13,5 +13,11 @@
 	<classpathentry kind="src" path="/api-sys-zgateway_2_2_0"/>
 	<classpathentry kind="src" path="src/main/api"/>
 	<classpathentry kind="lib" path="src/main/app/lib/mysql-connector-java-5.1.38-bin.jar"/>
+	<classpathentry kind="lib" path="lib/ctg/ccf2.jar"/>
+	<classpathentry kind="lib" path="lib/ctg/cicsjee.jar"/>
+	<classpathentry kind="lib" path="lib/ctg/ctgclient.jar"/>
+	<classpathentry kind="lib" path="lib/ctg/ctgserver.jar"/>
+	<classpathentry kind="lib" path="lib/ctg/geronimo-j2ee-connector_1.6_spec-1.0.jar"/>
+	<classpathentry kind="con" path="MULE_LIB/IBM CTG/org.mule.tooling.ui.contribution.ibm-ctg.3.8.0"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

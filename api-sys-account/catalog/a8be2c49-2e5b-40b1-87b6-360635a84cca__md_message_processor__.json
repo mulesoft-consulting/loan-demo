@@ -1,0 +1,11 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "acctupd-out"
+        }
+    },
+    "outputMessageMetadata": {},
+    "id": "a8be2c49-2e5b-40b1-87b6-360635a84cca",
+    "version": "5.2.0.0"
+}
