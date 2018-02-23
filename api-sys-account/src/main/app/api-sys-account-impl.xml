@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ibm-ctg="http://www.mulesoft.org/schema/mule/ibm-ctg" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/ibm-ctg http://www.mulesoft.org/schema/mule/ibm-ctg/current/mule-ibm-ctg.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+	<ibm-ctg:config name="IBM_CTG__Configuration" host="192.86.32.150" port="4148" serverName="CICSA1" username="ibmuser" password="Mule1379" doc:name="IBM CTG: Configuration" />
+    <db:mysql-config name="MySQL_Configuration" host="${db.hostname}" port="${db.port}" user="${db.user}" password="${db.password}" database="${db.database}" doc:name="MySQL Configuration"/>
+    <flow name="api-sys-account-impl-update-txn-flow">
+        <ee:xa-transactional action="ALWAYS_BEGIN" doc:name="Transactional">
+            <flow-ref name="api-sys-account-impl-cics-update-flow" doc:name="Flow Reference: cics-update-flow"/>
+            <flow-ref name="api-sys-account-impl-db-update-flow" doc:name="Flow Reference: db-update-flow"/>
+        </ee:xa-transactional>
+    </flow>
+    <flow name="api-sys-account-impl-db-update-flow">
+        <dw:transform-message doc:name="Transform: JSON to DB Record">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+
+---
+{
+	prePaidFinanceCharges: flowVars.payload-ctx.prePaidFinanceCharges,
+	combinedCreditScore: flowVars.payload-ctx.combinedCreditScore,
+	debtIncomeRatio: flowVars.payload-ctx.debtIncomeRatio,
+	minimumAdvanceAmount: flowVars.payload-ctx.minimumAdvanceAmount,
+	prePaymentPenaltyBasisAmount: flowVars.payload-ctx.prepaymentPenaltyBasisAmount,
+	loanAccountStatus: flowVars.payload-ctx.loanAccountStatus,
+	statementCode: flowVars.payload-ctx.statementCode,
+	statementDate: (flowVars.payload-ctx.statementDate) when flowVars.payload-ctx.satementDate != null and flowVars.payload-ctx.statementDate != "" 
+		otherwise "1900-01-01",
+	noteNumber: flowVars.payload-ctx.noteNumber,
+	maximumAdvanceAmount: flowVars.payload-ctx.maximumAdvanceAmount,
+	isRevolvingLineOfCredit: flowVars.payload-ctx.isRevolvingLineOfCredit,
+	paymentOption: flowVars.payload-ctx.paymentOption,
+	creditLimit: flowVars.payload-ctx.creditLimit,
+	term: flowVars.payload-ctx.term,
+	creditLimitGroupCode: flowVars.payload-ctx.creditLimitGroupCode,
+	noteAmount: flowVars.payload-ctx.noteAmount,
+	balloonDueDateTermValue: flowVars.payload-ctx.balloonDueDateTermValue,
+	prePaymentPenaltyExpirationDate: (flowVars.payload-ctx.prepaymentPenaltyExpirationDate) when flowVars.payload-ctx.prepaymentPenaltyExpirationDate != null and flowVars.payload-ctx.prepaymentPenaltyExpirationDate != ""
+		otherwise "1900-01-01",
+	loanInterestRateDetail: flowVars.payload-ctx.loanInterestRateDetail,
+	totalNumberOfPayments: flowVars.payload-ctx.totalNumberOfPayments,
+	prePaymentPenaltyPercentage: flowVars.payload-ctx.prepaymentPenaltyPercentage,
+	loanDecisionDate: (flowVars.payload-ctx.loanDecisionDate) when flowVars.payload-ctx.loanDecisionDate != null and flowVars.payload-ctx.loanDecisionDate != "" 
+		otherwise ("1900-01-01"),
+	creditLimitExpiration: (flowVars.payload-ctx.creditLimitExpiration) when flowVars.payload-ctx.creditLimitExpiration != null and flowVars.payload-ctx.creditLimitExpiration != "" 
+		otherwise "1900-01-01",
+	originationDate: (flowVars.payload-ctx.originationDate) when flowVars.payload-ctx.originationDate !=null and flowVars.payload-ctx.originationDate !="" 
+		otherwise "1900-01-01",
+	applicationDecisionStatus: flowVars.payload-ctx.applicationDecisionStatus,
+	creationDate: (flowVars.payload-ctx.creationDate) when flowVars.payload-ctx.creationDate !=null and flowVars.payload-ctx.creationDate != "" 
+		otherwise "1900-01-01",
+	disbursalDate: (flowVars.payload-ctx.disbursalDate) when flowVars.payload-ctx.disbursalDate != null and flowVars.payload-ctx.disbursalDate != "" 
+		otherwise "1900-01-01",
+	dailyPeriodicRate: flowVars.payload-ctx.dailyPeriodicRate,
+	balloonAmount: flowVars.payload-ctx.balloonAmount,
+	balloonDueDate: (flowVars.payload-ctx.balloonDueDate) when flowVars.payload-ctx.balloonDueDate != null and flowVars.payload-ctx.balloonDueDate !="" 
+		otherwise "1900-01-01",
+	prepaidInterest: flowVars.payload-ctx.prepaidInterest,
+	statementGroup: flowVars.payload-ctx.statementGroup,
+	numberOfGraceDays: flowVars.payload-ctx.numberOfGraceDays,
+	purposeCode: flowVars.payload-ctx.purposeCode,
+	requestedAmount: flowVars.payload-ctx.requestedAmount,
+	loanAccountSubstatus: flowVars.payload-ctx.loanAccountSubStatus,
+	category: flowVars.payload-ctx.category,
+	applicationOriginationDate: (flowVars.payload-ctx.applicationOriginationDate) when flowVars.payload-ctx.applicationOriginationDate != null and flowVars.payload-ctx.applicationOriginationDate != "" 
+		otherwise "1900-01-01",
+	interestPaidThruDate: (flowVars.payload-ctx.interestPaidThruDate) when flowVars.payload-ctx.interestPaidThruDate != null and flowVars.payload-ctx.interestPaidThruDate != "" 
+		otherwise "1900-01-01",
+	creditReportingCode: flowVars.payload-ctx.creditReportingCode
+}]]></dw:set-payload>
+            <dw:set-variable variableName="originalRequest"><![CDATA[%dw 1.0
+%output application/java
+---
+payload]]></dw:set-variable>
+        </dw:transform-message>
+        <db:insert config-ref="MySQL_Configuration" autoGeneratedKeys="true" doc:name="Database: Insert Account">
+            <db:parameterized-query><![CDATA[insert into spring_leaf.account(loan_decision_date, application_origination_date, application_decision_status, loan_account_status, loan_account_substatus, note_number, category, purpose_code, requested_amount, note_amount, credit_limit, credit_limit_expiration, credit_limit_group_code, credit_reporting_code, is_revolving_line_of_credit, minimum_advance_amount, maximum_advance_amount, origination_date, disbursal_date, creation_date, term, combined_credit_score, loan_interest_rate_detail, payment_option, daily_periodic_rate, total_number_of_payments, pre_paid_finance_charges, prepaid_interest, interest_paid_thru_date, number_of_grace_days, balloon_amount, balloon_due_date, balloon_due_date_term_value, pre_payment_penalty_basis_amount, pre_payment_penalty_percentage, pre_payment_penalty_expiration_date, statement_code, statement_group, statement_date, debt_income_ratio)
+values(STR_TO_DATE(#[payload.loanDecisionDate],'%Y-%m-%d'),STR_TO_DATE(#[payload.applicationOriginationDate],'%Y-%m-%d'),#[payload.applicationDecisionStatus],#[payload.loanAccountStatus],#[payload.loanAccountSubstatus],#[payload.noteNumber],#[payload.category],#[payload.purposeCode],#[payload.requestedAmount],#[payload.noteAmount],#[payload.creditLimit],STR_TO_DATE(#[payload.creditLimitExpiration],'%Y-%m-%d'),#[payload.creditLimitGroupCode],#[payload.creditReportingCode],#[payload.isRevolvingLineOfCredit],#[payload.minimumAdvanceAmount],#[payload.maximumAdvanceAmount],STR_TO_DATE(#[payload.originationDate],'%Y-%m-%d'),STR_TO_DATE(#[payload.disbursalDate],'%Y-%m-%d'),STR_TO_DATE(#[payload.creationDate],'%Y-%m-%d'),#[payload.term],#[payload.combinedCreditScore],#[payload.loanInterestRateDetail],#[payload.paymentOption],#[payload.dailyPeriodicRate],#[payload.totalNumberOfPayments],#[payload.prePaidFinanceCharges],#[payload.prepaidInterest],STR_TO_DATE(#[payload.interestPaidThruDate],'%Y-%m-%d'),#[payload.numberOfGraceDays],#[payload.balloonAmount],STR_TO_DATE(#[payload.balloonDueDate],'%Y-%m-%d'),#[payload.balloonDueDateTermValue],#[payload.prePaymentPenaltyBasisAmount],#[payload.prePaymentPenaltyPercentage],STR_TO_DATE(#[payload.prePaymentPenaltyExpirationDate],'%Y-%m-%d'),#[payload.statementCode],#[payload.statementGroup],#[payload.statementDate],#[payload.debtIncomeRatio])]]></db:parameterized-query>
+        </db:insert>
+        <dw:transform-message doc:name="Transform Message: DB to JSON">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	account_id: payload[0].generated_key,
+	applicationDecisionStatus: flowVars.payload-ctx.applicationDecisionStatus,
+	applicationOriginationDate: flowVars.payload-ctx.applicationOriginationDate,
+	balloonAmount: flowVars.payload-ctx.balloonAmount,
+	balloonDueDate: flowVars.payload-ctx.balloonDueDate,
+	balloonDueDateTermValue: flowVars.payload-ctx.balloonDueDateTermValue,
+	category: flowVars.payload-ctx.category,
+	combinedCreditScore: flowVars.payload-ctx.combinedCreditScore,
+	creationDate: flowVars.payload-ctx.creationDate,
+	creditLimit: flowVars.payload-ctx.creditLimit,
+	creditLimitExpiration: flowVars.payload-ctx.creditLimitExpiration,
+	creditLimitGroupCode: flowVars.payload-ctx.creditLimitGroupCode,
+	creditReportingCode: flowVars.payload-ctx.creditReportingCode,
+	dailyPeriodicRate: flowVars.payload-ctx.dailyPeriodicRate,
+	debtIncomeRatio: flowVars.payload-ctx.debtIncomeRatio,
+	disbursalDate: flowVars.payload-ctx.disbursalDate,
+	interestPaidThruDate: flowVars.payload-ctx.interestPaidThruDate,
+	isRevolvingLineOfCredit: flowVars.payload-ctx.isRevolvingLineOfCredit,
+	loanAccountStatus: flowVars.payload-ctx.loanAccountStatus,
+	loanAccountSubStatus: flowVars.payload-ctx.loanAccountSubStatus,
+	loanDecisionDate: flowVars.payload-ctx.loanDecisionDate,
+	loanInterestRateDetail: flowVars.payload-ctx.loanInterestRateDetail,
+	maximumAdvanceAmount: flowVars.payload-ctx.maximumAdvanceAmount,
+	minimumAdvanceAmount: flowVars.payload-ctx.minimumAdvanceAmount,
+	noteAmount: flowVars.payload-ctx.noteAmount,
+	noteNumber: flowVars.payload-ctx.noteNumber,
+	numberOfGraceDays: flowVars.payload-ctx.numberOfGraceDays,
+	originationDate: flowVars.payload-ctx.originationDate,
+	paymentOption: flowVars.payload-ctx.paymentOption,
+	prePaidFinanceCharges: flowVars.payload-ctx.prePaidFinanceCharges,
+	prepaidInterest: flowVars.payload-ctx.prepaidInterest,
+	prepaymentPenaltyBasisAmount: flowVars.payload-ctx.prepaymentPenaltyBasisAmount,
+	prepaymentPenaltyExpirationDate: flowVars.payload-ctx.prepaymentPenaltyExpirationDate,
+	prepaymentPenaltyPercentage: flowVars.payload-ctx.prepaymentPenaltyPercentage,
+	purposeCode: flowVars.payload-ctx.purposeCode,
+	requestedAmount: flowVars.payload-ctx.requestedAmount,
+	statementCode: flowVars.payload-ctx.statementCode,
+	statementDate: flowVars.payload-ctx.statementDate,
+	statementGroup: flowVars.payload-ctx.statementGroup,
+	term: flowVars.payload-ctx.term,
+	totalNumberOfPayments: flowVars.payload-ctx.totalNumberOfPayments
+}]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
+    <flow name="api-sys-account-impl-cics-update-flow">
+        <dw:transform-message doc:name="Transform Message: JSON to Copybook" metadata:id="d0f80c68-ed8b-47b6-91f2-ff9288737b54">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output text/plain schemaPath = "acctupd-in.ffd" , segmentIdent = "ACCOUNT-UPDATE-IN", encoding="ibm037"
+---
+[{
+	CUST-NO: payload.noteNumber as :string,
+	NUMBER-OF-ACCOUNTS: 1,
+	ACCOUNT-DETAILS: [{
+		ACCT-NUMBER: payload.noteNumber as :string,
+		BALANCE: payload.creditLimit as :string,
+		OVERDRAFT: payload.maximumAdvanceAmount as :string
+	}]
+}]]]></dw:set-payload>
+            <dw:set-variable variableName="ctgRequest"><![CDATA[%dw 1.0
+%output application/java
+---
+{ 
+  channel: "ACCTUPD",
+  encoding: "ibm037",
+  errorContainer: "OUTPUTMESSAGE",
+  programName: "ACCTUPD",
+  requestContainer: "INPUTCONTAINER",
+  responseContainer: "ACCTUPDCONT",
+  tpnName: "CSMI"
+} as :object {
+  class : "org.mule.modules.ibmctg.internal.model.ChannelRequest"
+}]]></dw:set-variable>
+            <dw:set-variable variableName="payload-ctx"><![CDATA[%dw 1.0
+%output application/json
+---
+payload]]></dw:set-variable>
+        </dw:transform-message>
+        <ibm-ctg:execute config-ref="IBM_CTG__Configuration" doc:name="IBM CTG: Call ACCTUPD CICS Txn" request-ref="#[flowVars.ctgRequest]"/>
+        <dw:transform-message doc:name="Transform Message: Copybook to JSON" metadata:id="a8be2c49-2e5b-40b1-87b6-360635a84cca">
+            <dw:input-payload mimeType="text/plain">
+                <dw:reader-property name="schemaPath" value="acctupd-in.ffd"/>
+                <dw:reader-property name="segmentIdent" value="RETURN-DATA"/>
+            </dw:input-payload>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	status: payload[0].RETURN-STATUS,
+	message: payload[0].RETURN-MSG
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <validation:is-true exceptionClass="org.mule.module.apikit.exception.ApikitRuntimeException" expression="#[json:status != '0001']" doc:name="Validation: Validate CICS Update"/>
+    </flow>
+</mule>
