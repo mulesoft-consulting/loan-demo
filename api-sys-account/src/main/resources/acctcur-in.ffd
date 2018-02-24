@@ -1,0 +1,14 @@
+form: COPYBOOK
+segments: 
+- id: 'ACCOUNT-NUMBER-IN'
+  values: 
+  - { name: 'CUST-NO-IN', type: String, length: 4 }
+- id: 'RETURN-DATA'
+  values: 
+  - { name: 'NUMBER-OF-ACCOUNTS', type: Binary, length: 2, format: { signed: TRUE, digits: 4 } }
+  - name: 'ACCOUNT-DETAILS'
+    count: 5
+    values: 
+    - { name: 'ACCT-NUMBER', type: String, length: 8 }
+    - { name: 'BALANCE', type: String, length: 8 }
+    - { name: 'OVERDRAFT', type: String, length: 8 }

@@ -13,6 +13,113 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
 	<ibm-ctg:config name="IBM_CTG__Configuration" host="192.86.32.150" port="4148" serverName="CICSA1" username="ibmuser" password="Mule1379" doc:name="IBM CTG: Configuration" />
     <db:mysql-config name="MySQL_Configuration" host="${db.hostname}" port="${db.port}" user="${db.user}" password="${db.password}" database="${db.database}" doc:name="MySQL Configuration"/>
+    <flow name="api-sys-account-impl-read-txn-flow">
+        <flow-ref name="api-sys-account-impl-db-read-flow" doc:name="Flow Reference: db-read-flow"/>
+        <enricher doc:name="Message Enricher">
+            <flow-ref name="api-sys-account-impl-cics-read-txn-flow" doc:name="Flow Reference: cics-read-txn-flow"/>
+            <enrich source="#[json:noteAmount]" target="#[flowVars.noteAmount]"/>
+            <enrich source="#[json:noteNumber]" target="#[flowVars.noteNumber]"/>
+        </enricher>
+        <dw:transform-message doc:name="Transform Message: Result">
+            <dw:input-payload doc:sample="sample_data/json_1.json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload mapObject ({
+	($$): flowVars.noteAmount when $$ as :string == "noteAmount"
+		otherwise flowVars.noteNumber when $$ as :string == "noteNumber"
+			otherwise $
+})]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
+    <flow name="api-sys-account-impl-cics-read-txn-flow">
+        <dw:transform-message doc:name="Transform Message: JSON to Copybook" metadata:id="4268e19c-992b-4583-ad8b-53e42d14ee0a">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output text/plain schemaPath = "acctcur-in.ffd" , segmentIdent = "ACCOUNT-NUMBER-IN", encoding="cp037"
+---
+[{
+	CUST-NO-IN: flowVars.customerNumber
+}]]]></dw:set-payload>
+            <dw:set-variable variableName="ctgRequest"><![CDATA[%dw 1.0
+%output application/java
+---
+{ 
+  channel: "ACCTCUR",
+  encoding: "ibm037",
+  errorContainer: "OUTPUTMESSAGE",
+  programName: "ACCTCUR",
+  requestContainer: "INPUTCONTAINER",
+  responseContainer: "ACCTCURRCONT",
+  tpnName: "CSMI"
+} as :object {
+  class : "org.mule.modules.ibmctg.internal.model.ChannelRequest"
+}]]></dw:set-variable>
+        </dw:transform-message>
+        <ibm-ctg:execute config-ref="IBM_CTG__Configuration" request-ref="#[flowVars.ctgRequest]" doc:name="IBM CTG: Call ACCTCUR CICS Txn"/>
+        <dw:transform-message doc:name="Transform Message: Copybook to JSON" metadata:id="65e944a3-c6e4-4229-b999-56fdde2b86c3">
+            <dw:input-payload mimeType="text/plain">
+                <dw:reader-property name="schemaPath" value="acctcur-in.ffd"/>
+                <dw:reader-property name="segmentIdent" value="RETURN-DATA"/>
+            </dw:input-payload>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	noteAmount: payload[0].ACCOUNT-DETAILS.BALANCE[0] as :number,
+	noteNumber: payload[0].ACCOUNT-DETAILS.ACCT-NUMBER[0] as :number
+}]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
+    <flow name="api-sys-account-impl-db-read-flow">
+        <db:select config-ref="MySQL_Configuration" doc:name="Database">
+            <db:parameterized-query><![CDATA[select * from account where note_number = #[flowVars.customerNumber]]]></db:parameterized-query>
+        </db:select>
+        <dw:transform-message doc:name="Transform Message: DB to JSON">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	applicationDecisionStatus: payload[0].application_decision_status,
+	applicationOriginationDate: payload[0].application_origination_date as :string,
+	balloonAmount: payload[0].balloon_amount,
+	balloonDueDate: payload[0].balloon_due_date as :string,
+	balloonDueDateTermValue: payload[0].balloon_due_date_term_value,
+	category: payload[0].category,
+	combinedCreditScore: payload[0].combined_credit_score,
+	creationDate: payload[0].creation_date as :string,
+	creditLimit: payload[0].credit_limit,
+	creditLimitExpiration: payload[0].credit_limit_expiration as :string,
+	creditLimitGroupCode: payload[0].credit_limit_group_code,
+	creditReportingCode: payload[0].credit_reporting_code,
+	dailyPeriodicRate: payload[0].daily_periodic_rate,
+	debtIncomeRatio: payload[0].debt_income_ratio,
+	disbursalDate: payload[0].disbursal_date as :string,
+	interestPaidThruDate: payload[0].interest_paid_thru_date,
+	isRevolvingLineOfCredit: payload[0].is_revolving_line_of_credit,
+	loanAccountStatus: payload[0].loan_account_status,
+	loanAccountSubStatus: payload[0].loan_account_substatus,
+	loanDecisionDate: payload[0].loan_decision_date as :string,
+	loanInterestRateDetail: payload[0].loan_interest_rate_detail,
+	maximumAdvanceAmount: payload[0].maximum_advance_amount,
+	minimumAdvanceAmount: payload[0].minimum_advance_amount,
+	numberOfGraceDays: payload[0].number_of_grace_days,
+	originationDate: payload[0].origination_date as :string,
+	paymentOption: payload[0].payment_option,
+	prePaidFinanceCharges: payload[0].pre_paid_finance_charges,
+	prepaidInterest: payload[0].pre_payment_penalty_basis_amount,
+	prepaymentPenaltyBasisAmount: payload[0].pre_payment_penalty_percentage,
+	prepaymentPenaltyExpirationDate: payload[0].pre_payment_penalty_expiration_date as :string,
+	prepaymentPenaltyPercentage: payload[0].prepaid_interest,
+	purposeCode: payload[0].purpose_code,
+	requestedAmount: payload[0].requested_amount,
+	statementCode: payload[0].statement_code,
+	statementDate: payload[0].statement_date as :string,
+	statementGroup: payload[0].statement_group,
+	term: payload[0].term,
+	totalNumberOfPayments: payload[0].total_number_of_payments
+}]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
     <flow name="api-sys-account-impl-update-txn-flow">
         <ee:xa-transactional action="ALWAYS_BEGIN" doc:name="Transactional">
             <flow-ref name="api-sys-account-impl-cics-update-flow" doc:name="Flow Reference: cics-update-flow"/>

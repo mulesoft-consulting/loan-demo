@@ -1,0 +1,11 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "acctcur-out"
+        }
+    },
+    "outputMessageMetadata": {},
+    "id": "65e944a3-c6e4-4229-b999-56fdde2b86c3",
+    "version": "5.2.0.0"
+}

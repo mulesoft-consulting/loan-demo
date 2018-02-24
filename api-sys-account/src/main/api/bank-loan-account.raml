@@ -1,0 +1,125 @@
+#%RAML 1.0 DataType
+
+type: object
+properties:
+  loanDecisionDate:
+    type: string
+    required: true
+  applicationOriginationDate:
+    type: string
+    required: false
+  applicationDecisionStatus:
+    type: string
+    required: true
+  loanAccountStatus:
+    type: string
+    required: true
+  loanAccountSubStatus:
+    type: string
+    required: false
+  noteNumber:
+    type: integer
+    required: true
+  category:
+    type: string
+    required: false
+  purposeCode:
+    type: string
+    required: true
+  requestedAmount:
+    type: number
+    required: true
+  noteAmount:
+    type: number
+    required: true
+  creditLimit:
+    type: number
+    required: false
+  creditLimitExpiration:
+    type: string
+    required: false
+  creditLimitGroupCode:
+    type: string
+    required: false
+  creditReportingCode:
+    type: string
+    required: false
+  isRevolvingLineOfCredit:
+    type: boolean
+    required: false
+  minimumAdvanceAmount:
+    type: number
+    required: false
+  maximumAdvanceAmount:
+    type: number
+    required: false
+  originationDate:
+    type: string
+    required: false
+  disbursalDate:
+    type: string
+    required: false
+  creationDate:
+    type: string
+    required: false
+  term:
+    type: string
+    required: true
+  combinedCreditScore:
+    type: integer
+    required: false
+  loanInterestRateDetail:
+    type: number
+    required: false
+  paymentOption:
+    type: string
+    required: false
+  dailyPeriodicRate:
+    type: integer
+    required: false
+  totalNumberOfPayments:
+    type: integer
+    required: true
+  prePaidFinanceCharges:
+    type: number
+    required: false
+  prepaidInterest:
+    type: number
+    required: false
+  interestPaidThruDate:
+    type: string
+    required: false
+  numberOfGraceDays:
+    type: integer
+    required: false
+  balloonAmount:
+    type: number
+    required: false
+  balloonDueDate:
+    type: string
+    required: false
+  balloonDueDateTermValue:
+    type: string
+    required: false
+  prepaymentPenaltyBasisAmount:
+    type: number
+    required: false
+  prepaymentPenaltyPercentage:
+    type: number
+    required: false
+  prepaymentPenaltyExpirationDate:
+    type: string
+    required: false
+  statementCode:
+    type: string
+    required: false
+  statementGroup:
+    type: string
+    required: false
+  statementDate:
+    type: string
+    required: false
+  debtIncomeRatio:
+    type: number
+    required: false
+
