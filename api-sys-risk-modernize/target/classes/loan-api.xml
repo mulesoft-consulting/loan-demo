@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:ws="http://www.mulesoft.org/schema/mule/ws" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/ws http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <http:listener-config name="loan-api-httpListenerConfig" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <apikit:config name="loan-api-config" raml="loan-api.raml" consoleEnabled="false" doc:name="Router"/>
+    <ws:consumer-config name="Web_Service_Consumer" wsdlLocation="http://api-sys-risk-soap.cloudhub.io/LoanDecision?wsdl" service="RiskRatingService" port="RiskRatingServicePort" serviceAddress="http://api-sys-risk-soap.cloudhub.io/LoanDecision" doc:name="Web Service Consumer"/>
+    <flow name="loan-api-main">
+        <http:listener config-ref="loan-api-httpListenerConfig" path="/api/*" doc:name="HTTP"/>
+        <apikit:router config-ref="loan-api-config" doc:name="APIkit Router"/>
+        <exception-strategy ref="loan-api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="loan-api-console">
+        <http:listener config-ref="loan-api-httpListenerConfig" path="/console/*" doc:name="HTTP"/>
+        <apikit:console config-ref="loan-api-config" doc:name="APIkit Console"/>
+    </flow>
+    <flow name="post:/evaluate:application/json:loan-api-config">
+        <byte-array-to-string-transformer mimeType="application/json" doc:name="Byte Array to String"/>
+        <enricher target="#[flowVars.loanDecision]" doc:name="Message Enricher">
+            <flow-ref name="callRiskRatingWS_Sub_Flow" doc:name="Flow Reference"/>
+        </enricher>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+%namespace ns0 http://loan.demo.mulesoft.com/
+---
+{
+	firstName: payload.firstName,
+	individualTaxNumber: payload.individualTaxNumber,
+	lastName: payload.lastName,
+	middleInitial: payload.middleInitial,
+	address: payload.address,
+	monthlyNetIncome: payload.monthlyNetIncome,
+	authorization: "approved" when flowVars.loanDecision.ns0#getLoanDecisionResponse.ns0#return == true
+	otherwise "denied",
+	bureauScores: payload.bureauScores map ((bureauScore , indexOfBureauScore) -> {
+		bureau: bureauScore.bureau,
+		ficoScore: bureauScore.ficoScore
+	}),
+	combinedFicoScore: payload.combinedFicoScore
+}]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
+    <sub-flow name="callRiskRatingWS_Sub_Flow">
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/xml
+%namespace ns0 http://loan.demo.mulesoft.com/
+---
+{
+	ns0#getLoanDecision: {
+		ns0#income: payload.monthlyNetIncome,
+		ns0#combinedFico: payload.combinedFicoScore
+	}
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <ws:consumer config-ref="Web_Service_Consumer" operation="getLoanDecision" doc:name="Web Service Consumer"/>
+    </sub-flow>
+    <apikit:mapping-exception-strategy name="loan-api-apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+</mule>
