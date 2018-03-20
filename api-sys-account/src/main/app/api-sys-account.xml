@@ -7,9 +7,10 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
 http://www.mulesoft.org/schema/mule/api-platform-gw http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd">
     <apikit:config name="api-sys-account-config" raml="api-sys-account.raml" consoleEnabled="true" consolePath="console" doc:name="Router" />
-    <api-platform-gw:api apiName="sfs-api-sys-account" id="sfs-api-sys-account" version="1.0" flowRef="api-sys-account-main" create="true" apikitRef="api-sys-account-config" doc:name="API Autodiscovery" />
+    <api-platform-gw:api apiName="groupId:e0b5b783-bb97-442e-b455-369ffc644e5d:assetId:loan-account-system-api" id="sfs-api-sys-account" version="1.0:9518128" flowRef="api-sys-account-main" create="true" apikitRef="api-sys-account-config" doc:name="API Autodiscovery" />
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="${http.port}" doc:name="HTTP Listener Configuration"/>
     <flow name="api-sys-account-main">
-        <http:listener config-ref="http-lc-0.0.0.0-8081" path="/api/*" doc:name="HTTP" />
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/api/*" doc:name="HTTP" />
         <apikit:router config-ref="api-sys-account-config" doc:name="APIkit Router" />
         <exception-strategy ref="api-sys-account-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy" />
     </flow>
