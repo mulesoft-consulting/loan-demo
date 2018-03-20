@@ -1,0 +1,18 @@
+#%RAML 1.0
+baseUri: https://mocksvc.mulesoft.com/mocks/f05f89d7-2acb-46d6-ad58-ea96d412cedc # 
+title: Loan API
+
+types: 
+  applicant: !include exchange_modules/da3f4959-0b6c-4bc3-9295-bd1034fb230f.training/loan-applicant-data-types/1.0.1/datatypes/Applicant.raml
+
+/evaluate:
+  post:
+    body: 
+      application/json:
+        type: applicant
+    responses: 
+      200:
+        body: 
+          application/json:
+            type: applicant
+      
