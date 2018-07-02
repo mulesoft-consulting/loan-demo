@@ -1,0 +1,31 @@
+{
+  "configs": [
+    "risk-rating-api.xml"
+  ],
+  "secureProperties": [],
+  "redeploymentEnabled": true,
+  "name": "api-sys-risk-java-4",
+  "minMuleVersion": "4.1.1",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedPackages": ["com.mulesoft.demo.loan"],
+      "exportedResources": [
+        "api/.gitignore",
+        "api/exchange_modules/e0b5b783-bb97-442e-b455-369ffc644e5d/loan-applicant-datatypes/1.0.1/datatypes/Address.raml",
+        "api/exchange_modules/e0b5b783-bb97-442e-b455-369ffc644e5d/loan-applicant-datatypes/1.0.1/datatypes/Applicant.raml",
+        "api/exchange_modules/e0b5b783-bb97-442e-b455-369ffc644e5d/loan-applicant-datatypes/1.0.1/datatypes/BureauScore.raml",
+        "api/exchange_modules/e0b5b783-bb97-442e-b455-369ffc644e5d/loan-applicant-datatypes/1.0.1/examples/ApplicantExample.raml",
+        "api/exchange_modules/e0b5b783-bb97-442e-b455-369ffc644e5d/loan-applicant-datatypes/1.0.1/examples/BureauScoreExample1.raml",
+        "api/exchange_modules/e0b5b783-bb97-442e-b455-369ffc644e5d/loan-applicant-datatypes/1.0.1/examples/BureauScoreExample2.raml",
+        "api/exchange_modules/e0b5b783-bb97-442e-b455-369ffc644e5d/loan-applicant-datatypes/1.0.1/examples/BureauScoreExample3.raml",
+        "api/risk-rating-api.raml"
+      ]
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}

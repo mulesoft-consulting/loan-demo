@@ -1,3 +1,10 @@
 .settings/
 target/
 .DS_Store
+/.metadata/
+.studio/
+flows/
+target/
+**/*.mflow/
+.mule/
+studio_analytics_id.txt
