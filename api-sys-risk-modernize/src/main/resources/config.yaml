@@ -1,0 +1,9 @@
+api:
+  id: "15505364"
+anypoint.platform:
+  client_id: "6eb3ea8ba43c4538aa9197313864c195"
+  client_secret: "eed9FEa3CEAb4744bE81329cE867F92C"
+  visualizer:
+    layer: "system"
+loanservice:
+  host: "api-sys-loan-risk-soap.us-e1.cloudhub.io"

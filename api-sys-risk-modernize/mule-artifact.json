@@ -1,0 +1,31 @@
+{
+  "configs": [
+    "risk-rating-api.xml"
+  ],
+  "secureProperties": [],
+  "redeploymentEnabled": true,
+  "name": "api-sys-risk-modernize",
+  "minMuleVersion": "4.1.1",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedPackages": [],
+      "exportedResources": [
+        "api/.gitignore",
+        "api/exchange_modules/2760420c-417e-4810-b2fe-6b5c1742f867/loan-applicant-datatype/1.0.1/datatypes/Address.raml",
+        "api/exchange_modules/2760420c-417e-4810-b2fe-6b5c1742f867/loan-applicant-datatype/1.0.1/datatypes/Applicant.raml",
+        "api/exchange_modules/2760420c-417e-4810-b2fe-6b5c1742f867/loan-applicant-datatype/1.0.1/datatypes/BureauScore.raml",
+        "api/exchange_modules/2760420c-417e-4810-b2fe-6b5c1742f867/loan-applicant-datatype/1.0.1/examples/ApplicantExample.raml",
+        "api/exchange_modules/2760420c-417e-4810-b2fe-6b5c1742f867/loan-applicant-datatype/1.0.1/examples/BureauScoreExample1.raml",
+        "api/exchange_modules/2760420c-417e-4810-b2fe-6b5c1742f867/loan-applicant-datatype/1.0.1/examples/BureauScoreExample2.raml",
+        "api/exchange_modules/2760420c-417e-4810-b2fe-6b5c1742f867/loan-applicant-datatype/1.0.1/examples/BureauScoreExample3.raml",
+        "api/risk-rating-api.raml"
+      ]
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}

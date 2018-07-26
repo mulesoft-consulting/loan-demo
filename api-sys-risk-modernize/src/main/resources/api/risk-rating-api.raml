@@ -1,0 +1,27 @@
+#%RAML 1.0
+version: v1
+baseUri: https://mocksvc.mulesoft.com/mocks/d75e2e25-7d71-474f-a303-1adc07f54d44/api # baseUri: http://localhost:8081/api
+title: Risk Rating API
+
+types: 
+  applicant: !include exchange_modules/2760420c-417e-4810-b2fe-6b5c1742f867/loan-applicant-datatype/1.0.1/datatypes/Applicant.raml
+
+/evaluate:
+  post:
+    body: 
+      application/json:
+        type: applicant
+    responses: 
+      200:
+        body: 
+    
+          application/json:
+            type: applicant
+  
+
+  
+    
+
+
+            
+          

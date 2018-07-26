@@ -11,13 +11,13 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>org.mule.tooling.core.muleBuilder</name>
+			<name>org.mule.tooling.core.muleStudioBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.mule.tooling.core.muleNature</nature>
+		<nature>org.mule.tooling.core.muleStudioNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
 </projectDescription>
